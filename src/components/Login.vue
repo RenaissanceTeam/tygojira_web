@@ -1,9 +1,9 @@
 <template>
   <div>
-    <form class="login" @submit.prevent="login">
+    <form class="login" @submit.prevent="doLogin">
       <h1>Sign in</h1>
       <label>User name</label>
-      <input required v-model="username" type="text" placeholder="Snoopy" />
+      <input required v-model="login" type="text" placeholder="Login" />
       <label>Password</label>
       <input
         required
@@ -33,14 +33,14 @@ export default {
   name: "login",
   data() {
     return {
-      username: "dogo",
-      password: "dogy"
+      login: "",
+      password: ""
     };
   },
   methods: {
-    login: function() {
-      const { username, password } = this;
-      this.$store.dispatch(AUTH_REQUEST, { username, password }).then(() => {
+    doLogin: function() {
+      const { login, password } = this;
+      this.$store.dispatch(AUTH_REQUEST, { login, password }).then(() => {
         this.$router.push("/");
       });
     }

@@ -1,19 +1,21 @@
-const mocks = {
-  auth: { POST: { token: "This-is-a-mocked-token" } },
-  "user/me": { GET: { name: "doggo", title: "sir" } }
-};
+import axios from 'axios'
 
-const apiCall = ({ url, method }) =>
-  new Promise((resolve, reject) => {
-    setTimeout(() => {
-      try {
-        resolve(mocks[url][method || "GET"]);
-        //console.log(`Mocked '${url}' - ${method || "GET"}`);
-        //console.log("response: ", mocks[url][method || "GET"]);
-      } catch (err) {
-        reject(new Error(err));
-      }
-    }, 1000);
-  });
+const apiCall = ({url, data, method}) =>
+    new Promise((resolve, reject) => {
+        try {
+            console.log("url=" + url + " data=" + JSON.stringify(data) + " method="+ method);
+            resolve(
+                client({url, data, method})
+            );
+            // console.log(`Mocked '${url}' - ${method || "GET"}`);
+            // console.log("response: ", mocks[url][method || "GET"]);
+        } catch (err) {
+            reject(new Error(err));
+        }
+    });
+
+export const client = axios.create({
+  baseURL: 'http://localhost:8080/'
+});
 
 export default apiCall;
