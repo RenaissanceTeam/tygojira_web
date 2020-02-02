@@ -4,7 +4,7 @@ import Home from './view/Home.vue'
 import Login from "./components/Login.vue";
 import store from "./data/store.js";
 
-Vue.use(Router)
+Vue.use(Router);
 
 const ifNotAuthenticated = (to, from, next) => {
   if (!store.getters.isAuthenticated) {

@@ -1,49 +1,58 @@
+<!-- TODO: encapsulate it in Auth view with modal overlay-->
 <template>
-  <div>
-    <form class="login" @submit.prevent="doLogin">
-      <h1>Sign in</h1>
-      <label>User name</label>
-      <input required v-model="login" type="text" placeholder="Login" />
-      <label>Password</label>
-      <input
-        required
-        v-model="password"
-        type="password"
-        placeholder="Password"
-      />
-      <hr />
-      <button type="submit">Login</button>
-    </form>
-  </div>
+    <div>
+        <section>
+            <form action="">
+                <div class="modal-card" style="width: 30%; margin-top: 8%">
+                    <header class="modal-card-head">
+                        <p class="modal-card-title">Login</p>
+                    </header>
+                    <section class="modal-card-body">
+                        <b-field label="Username">
+                            <b-input
+                                    type="login"
+                                    v-model="login"
+                                    placeholder="Your username"
+                                    required>
+                            </b-input>
+                        </b-field>
+
+                        <b-field label="Password">
+                            <b-input
+                                    type="password"
+                                    v-model="password"
+                                    password-reveal
+                                    placeholder="Your password"
+                                    required>
+                            </b-input>
+                        </b-field>
+                    </section>
+                    <footer class="modal-card-foot">
+                        <button class="button is-primary" @click="doLogin">Login</button>
+                    </footer>
+                </div>
+            </form>
+        </section>
+    </div>
 </template>
 
-<style>
-.login {
-  display: flex;
-  flex-direction: column;
-  width: 300px;
-  padding: 10px;
-}
-</style>
-
 <script>
-import { AUTH_REQUEST } from "../data/constants/auth_constants";
+    import {AUTH_REQUEST} from "../data/constants/auth_constants";
 
-export default {
-  name: "login",
-  data() {
-    return {
-      login: "",
-      password: ""
-    };
-  },
-  methods: {
-    doLogin: function() {
-      const { login, password } = this;
-      this.$store.dispatch(AUTH_REQUEST, { login, password }).then(() => {
-        this.$router.push("/");
-      });
+    export default {
+        data() {
+            return {
+                login: '',
+                password: ''
+            }
+        },
+        methods: {
+            doLogin: function () {
+                const {login, password} = this;
+                this.$store.dispatch(AUTH_REQUEST, {login, password}).then(() => {
+                    this.$router.push("/");
+                });
+            }
+        }
     }
-  }
-};
 </script>
