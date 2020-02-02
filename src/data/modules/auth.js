@@ -5,7 +5,6 @@ import {
   AUTH_SUCCESS,
   AUTH_LOGOUT
 } from "../constants/auth_constants";
-// import { USER_REQUEST } from "../constants/user_constants";
 import apiCall from "../../utils/api";
 import {client} from "../../utils/api"
 

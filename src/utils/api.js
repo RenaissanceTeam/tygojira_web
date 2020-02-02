@@ -7,8 +7,6 @@ const apiCall = ({url, data, method}) =>
             resolve(
                 client({url, data, method})
             );
-            // console.log(`Mocked '${url}' - ${method || "GET"}`);
-            // console.log("response: ", mocks[url][method || "GET"]);
         } catch (err) {
             reject(new Error(err));
         }
