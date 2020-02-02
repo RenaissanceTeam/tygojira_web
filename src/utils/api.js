@@ -15,7 +15,7 @@ const apiCall = ({url, data, method}) =>
     });
 
 export const client = axios.create({
-  baseURL: 'http://localhost:8080/'
+  baseURL: process.env.VUE_APP_API_URL
 });
 
 export default apiCall;
