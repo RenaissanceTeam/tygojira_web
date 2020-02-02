@@ -27,7 +27,7 @@
 </style>
 
 <script>
-import { AUTH_REQUEST } from "../store/constants/auth_constants";
+import { AUTH_REQUEST } from "../data/constants/auth_constants";
 
 export default {
   name: "login",

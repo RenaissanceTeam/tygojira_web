@@ -3,14 +3,24 @@
     <ul>
       <li><router-link to="/">Home</router-link></li>
       <li><router-link to="/about">About</router-link></li>
+      <li v-on:click="logout"><a>Log out</a></li>
     </ul>
   </header>
 </template>
 
 <script>
-export default {
-  name: "Header"
-}
+  import { AUTH_LOGOUT } from "../../data/constants/auth_constants";
+
+  export default {
+    name: "Header",
+    methods: {
+      logout: function() {
+        this.$store.dispatch(AUTH_LOGOUT).then(() => {
+          this.$router.push("/login");
+        });
+      }
+    }
+  };
 </script>
 
 <style scoped>
