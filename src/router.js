@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './view/Home.vue'
+import About from './view/About.vue'
 import Login from "./components/Login.vue";
 import store from "./data/store.js";
 
@@ -39,7 +40,7 @@ export default new Router({
     {
       path: '/about',
       name: 'about',
-      component: () => import('./view/About.vue'),
+      component: About,
       beforeEnter: ifAuthenticated
     }
   ]

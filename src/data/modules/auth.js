@@ -1,17 +1,16 @@
-/* eslint-disable promise/param-names */
 import {
   AUTH_REQUEST,
   AUTH_ERROR,
   AUTH_SUCCESS,
   AUTH_LOGOUT
 } from "../constants/auth_constants";
-import apiCall from "../../utils/api";
-import {client} from "../../utils/api"
+import authApi from "../../api/auth_api";
+import api from "../../api/api";
+import {debug} from "../constants/env_constants"
 
 const state = {
   token: localStorage.getItem("user-token") || "",
-  status: "",
-  hasLoadedOnce: false
+  status: ""
 };
 
 const getters = {
@@ -20,48 +19,40 @@ const getters = {
 };
 
 const actions = {
-  [AUTH_REQUEST]: ({ commit }, user) => {
-    return new Promise((resolve, reject) => {
-      commit(AUTH_REQUEST);
-      apiCall({ url: "login", data: user, method: "POST" })
+  async [AUTH_REQUEST]({commit}, credentials) {
+    commit(AUTH_REQUEST);
+    await authApi.login(credentials)
         .then(resp => {
-          console.log("AUTH_REQUEST response=" + JSON.stringify(resp));
-          console.log("AUTH_REQUEST token=" + resp.data.token);
+          if (debug) console.log("AUTH_REQUEST response=" + JSON.stringify(resp));
+          if (debug) console.log("AUTH_REQUEST token=" + resp.data.token);
           localStorage.setItem("user-token", resp.data.token);
-          client.defaults.headers.common['Authorization'] = "Bearer " + resp.data.token;
+          api.defaults.headers.common['Authorization'] = "Bearer " + resp.data.token;
           commit(AUTH_SUCCESS, resp);
-          resolve();
         })
         .catch(err => {
-          commit(AUTH_ERROR, err);
           localStorage.removeItem("user-token");
-          reject(err);
+          commit(AUTH_ERROR, err);
+          throw err
         });
-    });
   },
-  [AUTH_LOGOUT]: ({ commit }) => {
-    return new Promise(resolve => {
-      commit(AUTH_LOGOUT);
-      localStorage.removeItem("user-token");
-      resolve();
-    });
+  async [AUTH_LOGOUT]({commit}) {
+    localStorage.removeItem("user-token");
+    commit(AUTH_LOGOUT);
   }
 };
 
 const mutations = {
-  [AUTH_REQUEST]: state => {
+  [AUTH_REQUEST](state) {
     state.status = "loading";
   },
-  [AUTH_SUCCESS]: (state, resp) => {
+  [AUTH_SUCCESS](state, resp) {
     state.status = "success";
     state.token = resp.data.token;
-    state.hasLoadedOnce = true;
   },
-  [AUTH_ERROR]: state => {
+  [AUTH_ERROR](state) {
     state.status = "error";
-    state.hasLoadedOnce = true;
   },
-  [AUTH_LOGOUT]: state => {
+  [AUTH_LOGOUT](state) {
     state.token = "";
   }
 };
