@@ -1,58 +1,91 @@
-<!-- TODO: encapsulate it in Auth view with modal overlay-->
 <template>
-    <div>
-        <section>
-            <form action="">
-                <div class="modal-card" style="width: 30%; margin-top: 8%">
-                    <header class="modal-card-head">
-                        <p class="modal-card-title">Login</p>
-                    </header>
-                    <section class="modal-card-body">
-                        <b-field label="Username">
-                            <b-input
-                                    type="login"
-                                    v-model="login"
-                                    placeholder="Your username"
-                                    required>
-                            </b-input>
-                        </b-field>
+  <v-app id="inspire">
+    <v-content>
+      <v-container
+              class="fill-height"
+              fluid
+      >
+        <v-row
+                align="center"
+                justify="center"
+        >
+          <v-col
+                  cols="12"
+                  sm="8"
+                  md="4"
+          >
+            <v-card class="elevation-12">
+              <v-toolbar
+                      color="primary"
+                      dark
+                      flat
+              >
+                <v-toolbar-title>Login</v-toolbar-title>
+                <v-spacer/>
+              </v-toolbar>
+              <v-card-text>
+                <v-form>
+                  <v-text-field
+                          label="Login"
+                          name="login"
+                          prepend-icon="mdi-lock"
+                          type="text"
+                          required
+                          :rules="[v => !!v || 'Login is required']"
+                          v-model="login"
+                  />
 
-                        <b-field label="Password">
-                            <b-input
-                                    type="password"
-                                    v-model="password"
-                                    password-reveal
-                                    placeholder="Your password"
-                                    required>
-                            </b-input>
-                        </b-field>
-                    </section>
-                    <footer class="modal-card-foot">
-                        <button class="button is-primary" @click="doLogin">Login</button>
-                    </footer>
-                </div>
-            </form>
-        </section>
-    </div>
+                  <v-text-field
+                          id="password"
+                          label="Password"
+                          name="password"
+                          prepend-icon="mdi-account"
+                          type="password"
+                          required
+                          :rules="[v => !!v || 'Password is required']"
+                          v-model="password"
+                  />
+                </v-form>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer/>
+                <v-btn
+                        color="primary"
+                        v-on:click="doLogin"
+                >
+                  Login
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+            <v-alert v-if="badCredentials" type="error">
+              Bad credentials
+            </v-alert>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-content>
+  </v-app>
 </template>
 
 <script>
-    import {AUTH_REQUEST} from "../data/constants/auth_constants";
+  import {AUTH_REQUEST} from "../data/constants/auth_constants";
 
-    export default {
-        data() {
-            return {
-                login: '',
-                password: ''
-            }
-        },
-        methods: {
-            doLogin: function () {
-                const {login, password} = this;
-                this.$store.dispatch(AUTH_REQUEST, {login, password}).then(() => {
-                    this.$router.push("/");
-                });
-            }
-        }
+  export default {
+    data: () => ({
+      login: '',
+      password: '',
+      badCredentials: false
+    }),
+    methods: {
+      doLogin: function () {
+        const {login, password} = this;
+        this.$store.dispatch(AUTH_REQUEST, {login, password}).then(() => {
+          this.$router.push("/");
+        }).catch(() => {
+          this.password = '';
+          this.badCredentials = true;
+        });
+      }
     }
+  }
 </script>
