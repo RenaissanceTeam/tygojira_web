@@ -2,14 +2,17 @@ import {
   AUTH_REQUEST,
   AUTH_ERROR,
   AUTH_SUCCESS,
-  AUTH_LOGOUT
+  AUTH_LOGOUT,
+  AUTH_REFRESH,
+  USER_TOKEN_NAME
 } from "../constants/auth_constants";
 import authApi from "../../api/auth_api";
-import api from "../../api/api";
-import {debug} from "../constants/env_constants"
+import {setAuthorizationHeader, cleanAuthorizationHeader} from "../../api/api";
+import {debug, tokenExpiration} from "../constants/env_constants"
+import {deleteWithExpiry, getWithExpiry, setWithExpiry} from "../../utils/local_storage";
 
 const state = {
-  token: localStorage.getItem("user-token") || "",
+  token: localStorage.getItem(USER_TOKEN_NAME) || "",
   status: ""
 };
 
@@ -24,20 +27,33 @@ const actions = {
     await authApi.login(credentials)
         .then(resp => {
           if (debug) console.log("AUTH_REQUEST response=" + JSON.stringify(resp));
-          if (debug) console.log("AUTH_REQUEST token=" + resp.data.token);
-          localStorage.setItem("user-token", resp.data.token);
-          api.defaults.headers.common['Authorization'] = "Bearer " + resp.data.token;
-          commit(AUTH_SUCCESS, resp);
-        })
-        .catch(err => {
-          localStorage.removeItem("user-token");
+          const token = resp.data.token;
+
+          if (debug) console.log("AUTH_REQUEST token=" + token);
+          setWithExpiry(USER_TOKEN_NAME, token, tokenExpiration);
+          setAuthorizationHeader("Bearer " + token);
+          commit(AUTH_SUCCESS, token);
+        }).catch(err => {
+          deleteWithExpiry(USER_TOKEN_NAME);
           commit(AUTH_ERROR, err);
           throw err
         });
   },
   async [AUTH_LOGOUT]({commit}) {
-    localStorage.removeItem("user-token");
+    deleteWithExpiry(USER_TOKEN_NAME);
+    cleanAuthorizationHeader();
     commit(AUTH_LOGOUT);
+  },
+  async [AUTH_REFRESH]({commit}) {
+    try {
+      const token = getWithExpiry(USER_TOKEN_NAME);
+      commit(AUTH_SUCCESS, token);
+      setAuthorizationHeader("Bearer " + token);
+    } catch (e) {
+      commit(AUTH_ERROR);
+      cleanAuthorizationHeader();
+      throw e
+    }
   }
 };
 
@@ -45,12 +61,13 @@ const mutations = {
   [AUTH_REQUEST](state) {
     state.status = "loading";
   },
-  [AUTH_SUCCESS](state, resp) {
+  [AUTH_SUCCESS](state, token) {
     state.status = "success";
-    state.token = resp.data.token;
+    state.token = token;
   },
   [AUTH_ERROR](state) {
     state.status = "error";
+    state.token = "";
   },
   [AUTH_LOGOUT](state) {
     state.token = "";
