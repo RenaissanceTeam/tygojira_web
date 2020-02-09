@@ -11,7 +11,7 @@
   import Header from './components/layout/Header.vue'
   import store from "./data/store";
   import {AUTH_REFRESH} from "./data/constants/auth_constants";
-  import {debug} from "./data/constants/env_constants";
+  import {debug, debugError} from "./utils/logging";
 
   export default {
     name: 'app',
@@ -25,9 +25,9 @@
     },
     beforeCreate() {
       this.$store.dispatch(AUTH_REFRESH).then(() => {
-        if (debug) console.log("Using past token");
+        debug("App beforeCreate:", "Past token used");
       }).catch(e => {
-        if (debug) console.log(e.message);
+        debugError("App beforeCreate:", e.message);
         this.$router.push("/login");
       });
     }

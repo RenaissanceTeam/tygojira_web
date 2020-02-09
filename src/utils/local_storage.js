@@ -1,3 +1,4 @@
+import {debug} from "./logging";
 
 export function setWithExpiry(key, value, ttl) {
   if (ttl < 0) throw new Error("ttl cannot be negative");
@@ -9,12 +10,27 @@ export function setWithExpiry(key, value, ttl) {
   localStorage.setItem(key, JSON.stringify(item))
 }
 
-export function getWithExpiry(key) {
+export function getOrEmptyIfExpired(key) {
   const itemStr = localStorage.getItem(key);
 
-  if (!itemStr) {
-    throw new Error(`${key} doesn't exists`)
+  if (!itemStr) return "";
+
+  const item = JSON.parse(itemStr);
+  const now = new Date();
+
+  if (now.getTime() > item.expiry) {
+    localStorage.removeItem(key);
+    debug(`${key} is expired, it has been removed`);
+    return "";
   }
+  return item.value
+}
+
+export function getOrThrowIfExpired(key) {
+  const itemStr = localStorage.getItem(key);
+
+  if (!itemStr) throw new Error(`${key} doesn't exists`);
+
   const item = JSON.parse(itemStr);
   const now = new Date();
 

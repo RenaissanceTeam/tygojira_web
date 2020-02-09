@@ -8,36 +8,34 @@ import {
 } from "../constants/auth_constants";
 import authApi from "../../api/auth_api";
 import {setAuthorizationHeader, cleanAuthorizationHeader} from "../../api/api";
-import {debug, tokenExpiration} from "../constants/env_constants"
-import {deleteWithExpiry, getWithExpiry, setWithExpiry} from "../../utils/local_storage";
+import {tokenExpiration} from "../constants/env_constants"
+import {deleteWithExpiry, getOrEmptyIfExpired, getOrThrowIfExpired, setWithExpiry} from "../../utils/local_storage";
+import {debug, debugError} from "../../utils/logging";
 
 const state = {
-  token: localStorage.getItem(USER_TOKEN_NAME) || "",
-  status: ""
+  token: getOrEmptyIfExpired(USER_TOKEN_NAME),
+  systemUserRole: ""
 };
 
 const getters = {
-  isAuthenticated: state => !!state.token,
-  authStatus: state => state.status
+  isAuthenticated: state => !!state.token
 };
 
 const actions = {
-  async [AUTH_REQUEST]({commit}, credentials) {
-    commit(AUTH_REQUEST);
+  async [AUTH_REQUEST]({commit, dispatch}, credentials) {
     await authApi.login(credentials)
-        .then(resp => {
-          if (debug) console.log("AUTH_REQUEST response=" + JSON.stringify(resp));
-          const token = resp.data.token;
-
-          if (debug) console.log("AUTH_REQUEST token=" + token);
-          setWithExpiry(USER_TOKEN_NAME, token, tokenExpiration);
-          setAuthorizationHeader("Bearer " + token);
-          commit(AUTH_SUCCESS, token);
-        }).catch(err => {
+        .then(response => {
+          const tokenResponse = response.data;
+          debug(AUTH_REQUEST, "tokenResponse:", tokenResponse);
+          setWithExpiry(USER_TOKEN_NAME, tokenResponse.token, tokenExpiration);
+        })
+        .catch(err => {
+          debugError(AUTH_REQUEST, err.message, err.response.data.message);
           deleteWithExpiry(USER_TOKEN_NAME);
           commit(AUTH_ERROR, err);
           throw err
-        });
+        })
+        .then(() => dispatch(AUTH_REFRESH))
   },
   async [AUTH_LOGOUT]({commit}) {
     deleteWithExpiry(USER_TOKEN_NAME);
@@ -46,9 +44,20 @@ const actions = {
   },
   async [AUTH_REFRESH]({commit}) {
     try {
-      const token = getWithExpiry(USER_TOKEN_NAME);
-      commit(AUTH_SUCCESS, token);
+      const token = getOrThrowIfExpired(USER_TOKEN_NAME);
       setAuthorizationHeader("Bearer " + token);
+
+      await authApi.systemUserRole()
+          .then(response => {
+            const systemUserRoleResponse = response.data;
+            debug(AUTH_REFRESH, "systemUserRoleResponse:", systemUserRoleResponse);
+            commit(AUTH_REFRESH, systemUserRoleResponse.systemUserRole)
+          })
+          .catch(err => {
+            debugError(AUTH_REFRESH, err.message, err.response.data.message);
+            throw err
+          });
+      commit(AUTH_SUCCESS, token);
     } catch (e) {
       commit(AUTH_ERROR);
       cleanAuthorizationHeader();
@@ -58,19 +67,19 @@ const actions = {
 };
 
 const mutations = {
-  [AUTH_REQUEST](state) {
-    state.status = "loading";
-  },
   [AUTH_SUCCESS](state, token) {
-    state.status = "success";
     state.token = token;
   },
   [AUTH_ERROR](state) {
-    state.status = "error";
     state.token = "";
+    state.systemUserRole = "";
   },
   [AUTH_LOGOUT](state) {
     state.token = "";
+    state.systemUserRole = "";
+  },
+  [AUTH_REFRESH](state, systemUserRole) {
+    state.systemUserRole = systemUserRole;
   }
 };
 

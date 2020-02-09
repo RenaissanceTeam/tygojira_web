@@ -42,6 +42,7 @@
                           prepend-icon="mdi-account"
                           type="password"
                           required
+                          autocomplete="on"
                           :rules="[v => !!v || 'Password is required']"
                           v-model="password"
                   />
@@ -82,8 +83,7 @@
         const {login, password} = this;
         this.$store.dispatch(AUTH_REQUEST, new Credentials(login, password)).then(() => {
           this.$router.push("/");
-        }).catch(e => {
-          console.error(e.message);
+        }).catch(() => {
           this.password = '';
           this.badCredentials = true;
         });
