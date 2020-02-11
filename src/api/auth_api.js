@@ -2,5 +2,5 @@ import api from "./api";
 
 export default {
   login: credentials => api.post("/login", credentials),
-  systemUserRole: () => api.get("/auth/role")
+  userInfo: () => api.get("/auth/info")
 }

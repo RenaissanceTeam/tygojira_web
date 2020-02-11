@@ -9,7 +9,6 @@
 
 <script>
   import Header from './components/layout/Header.vue'
-  import store from "./data/store";
   import {AUTH_REFRESH} from "./data/constants/auth_constants";
   import {debug, debugError} from "./utils/logging";
 
@@ -20,7 +19,7 @@
     },
     computed: {
       isAuthenticated: function () {
-        return store.getters.isAuthenticated
+        return this.$store.getters.isAuthenticated
       }
     },
     beforeCreate() {

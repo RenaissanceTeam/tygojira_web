@@ -4,21 +4,28 @@ import {
   AUTH_SUCCESS,
   AUTH_LOGOUT,
   AUTH_REFRESH,
-  USER_TOKEN_NAME
+  USER_TOKEN_NAME,
+  SYSTEM_USER_ROLE
 } from "../constants/auth_constants";
 import authApi from "../../api/auth_api";
 import {setAuthorizationHeader, cleanAuthorizationHeader} from "../../api/api";
 import {tokenExpiration} from "../constants/env_constants"
 import {deleteWithExpiry, getOrEmptyIfExpired, getOrThrowIfExpired, setWithExpiry} from "../../utils/local_storage";
 import {debug, debugError} from "../../utils/logging";
+import {CALLING_EMPLOYEE} from "../constants/employee_constants";
 
 const state = {
   token: getOrEmptyIfExpired(USER_TOKEN_NAME),
+  username: "",
   systemUserRole: ""
 };
 
 const getters = {
-  isAuthenticated: state => !!state.token
+  isAuthenticated: state => !!state.token,
+  username: state => state.username,
+  isUser: (state, rootGetters) => rootGetters.isAuthenticated && state.systemUserRole === SYSTEM_USER_ROLE.USER,
+  isAdmin: (state, rootGetters) => rootGetters.isAuthenticated && !rootGetters.isUser && state.systemUserRole === SYSTEM_USER_ROLE.ADMIN,
+  isSuperUser: (state, rootGetters) => rootGetters.isAuthenticated && !rootGetters.isAdmin && state.systemUserRole === SYSTEM_USER_ROLE.SUPERUSER
 };
 
 const actions = {
@@ -42,22 +49,24 @@ const actions = {
     cleanAuthorizationHeader();
     commit(AUTH_LOGOUT);
   },
-  async [AUTH_REFRESH]({commit}) {
+  async [AUTH_REFRESH]({commit, dispatch}) {
     try {
       const token = getOrThrowIfExpired(USER_TOKEN_NAME);
       setAuthorizationHeader("Bearer " + token);
 
-      await authApi.systemUserRole()
+      await authApi.userInfo()
           .then(response => {
-            const systemUserRoleResponse = response.data;
-            debug(AUTH_REFRESH, "systemUserRoleResponse:", systemUserRoleResponse);
-            commit(AUTH_REFRESH, systemUserRoleResponse.systemUserRole)
+            const userInfoResponse = response.data;
+            debug(AUTH_REFRESH, "userInfoResponse:", userInfoResponse);
+            return userInfoResponse;
           })
           .catch(err => {
             debugError(AUTH_REFRESH, err.message, err.response.data.message);
             throw err
-          });
-      commit(AUTH_SUCCESS, token);
+          })
+          .then((userInfoResponse) => commit(AUTH_REFRESH, userInfoResponse))
+          .then(() => commit(AUTH_SUCCESS, token))
+          .then(() => dispatch(CALLING_EMPLOYEE));
     } catch (e) {
       commit(AUTH_ERROR);
       cleanAuthorizationHeader();
@@ -72,14 +81,17 @@ const mutations = {
   },
   [AUTH_ERROR](state) {
     state.token = "";
+    state.username = "";
     state.systemUserRole = "";
   },
   [AUTH_LOGOUT](state) {
     state.token = "";
+    state.username = "";
     state.systemUserRole = "";
   },
-  [AUTH_REFRESH](state, systemUserRole) {
-    state.systemUserRole = systemUserRole;
+  [AUTH_REFRESH](state, userInfoResponse) {
+    state.username = userInfoResponse.username;
+    state.systemUserRole = userInfoResponse.systemUserRole;
   }
 };
 
