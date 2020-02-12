@@ -9,7 +9,6 @@
       <v-btn
               text
               color="secondary"
-              x-large
               v-for="item in toolbarItems"
               :key="item.title"
               :to="item.link">
@@ -37,6 +36,7 @@
     data: () => ({
       toolbarItems: [
         {title: 'About', link: '/about'},
+        {title: 'Employee', link: '/employee'},
       ]
     }),
     computed: {

@@ -1,3 +1,14 @@
+export const FullEmployeeInfoDtoFields = {
+  id: "id",
+  firstName: "firstName",
+  lastName: "lastName",
+  middleName: "middleName",
+  position: "position",
+  skills: "skills",
+  subdivision: "subdivision",
+  workRoles: "workRoles"
+};
+
 export class EmployeeDto {
   constructor(username, firstName, lastName, middleName, position, subdivision) {
     this.username    = username;
