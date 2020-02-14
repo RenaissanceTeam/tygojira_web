@@ -29,7 +29,6 @@
 </template>
 
 <script>
-  import store from "../../data/store.js";
   import {AUTH_LOGOUT} from "../../data/constants/auth_constants";
 
   export default {
@@ -41,7 +40,7 @@
     }),
     computed: {
       isAuthenticated: function() {
-        return store.getters.isAuthenticated
+        return this.$store.getters.isAuthenticated
       }
     },
     methods: {
