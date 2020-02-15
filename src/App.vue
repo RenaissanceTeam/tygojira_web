@@ -9,7 +9,8 @@
 
 <script>
   import Header from './components/layout/Header.vue'
-  import store from "./data/store";
+  import {AUTH_REFRESH} from "./data/constants/auth_constants";
+  import {debug, debugError} from "./utils/logging";
 
   export default {
     name: 'app',
@@ -17,9 +18,17 @@
       Header
     },
     computed: {
-      isAuthenticated: function() {
-        return store.getters.isAuthenticated
+      isAuthenticated: function () {
+        return this.$store.getters.isAuthenticated
       }
+    },
+    beforeCreate() {
+      this.$store.dispatch(AUTH_REFRESH).then(() => {
+        debug("App beforeCreate:", "Past token used");
+      }).catch(e => {
+        debugError("App beforeCreate:", e.message);
+        this.$router.push("/login");
+      });
     }
   }
 </script>

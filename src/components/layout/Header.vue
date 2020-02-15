@@ -9,7 +9,6 @@
       <v-btn
               text
               color="secondary"
-              x-large
               v-for="item in toolbarItems"
               :key="item.title"
               :to="item.link">
@@ -30,18 +29,18 @@
 </template>
 
 <script>
-  import store from "../../data/store.js";
   import {AUTH_LOGOUT} from "../../data/constants/auth_constants";
 
   export default {
     data: () => ({
       toolbarItems: [
         {title: 'About', link: '/about'},
+        {title: 'Employee', link: '/employee'},
       ]
     }),
     computed: {
       isAuthenticated: function() {
-        return store.getters.isAuthenticated
+        return this.$store.getters.isAuthenticated
       }
     },
     methods: {

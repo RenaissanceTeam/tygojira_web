@@ -42,6 +42,7 @@
                           prepend-icon="mdi-account"
                           type="password"
                           required
+                          autocomplete="on"
                           :rules="[v => !!v || 'Password is required']"
                           v-model="password"
                   />
@@ -69,6 +70,7 @@
 
 <script>
   import {AUTH_REQUEST} from "../data/constants/auth_constants";
+  import {Credentials} from "../data/dto/auth_dto";
 
   export default {
     data: () => ({
@@ -79,7 +81,7 @@
     methods: {
       doLogin: function () {
         const {login, password} = this;
-        this.$store.dispatch(AUTH_REQUEST, {login, password}).then(() => {
+        this.$store.dispatch(AUTH_REQUEST, new Credentials(login, password)).then(() => {
           this.$router.push("/");
         }).catch(() => {
           this.password = '';
