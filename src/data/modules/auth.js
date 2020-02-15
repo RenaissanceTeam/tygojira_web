@@ -9,13 +9,12 @@ import {
 } from "../constants/auth_constants";
 import authApi from "../../api/auth_api";
 import {setAuthorizationHeader, cleanAuthorizationHeader} from "../../api/api";
-import {tokenExpiration} from "../constants/env_constants"
-import {deleteWithExpiry, getOrEmptyIfExpired, getOrThrowIfExpired, setWithExpiry} from "../../utils/local_storage";
+import {getItemOrEmpty, getItemOrThrow, setItem, removeItem} from "../../utils/local_storage";
 import {debug, debugError} from "../../utils/logging";
 import {CALLING_EMPLOYEE} from "../constants/employee_constants";
 
 const state = {
-  token: getOrEmptyIfExpired(USER_TOKEN_NAME),
+  token: getItemOrEmpty(USER_TOKEN_NAME),
   username: "",
   systemUserRole: ""
 };
@@ -34,24 +33,24 @@ const actions = {
         .then(response => {
           const tokenResponse = response.data;
           debug(AUTH_REQUEST, "tokenResponse:", tokenResponse);
-          setWithExpiry(USER_TOKEN_NAME, tokenResponse.token, tokenExpiration);
+          setItem(USER_TOKEN_NAME, tokenResponse.token);
         })
         .catch(err => {
           debugError(AUTH_REQUEST, err.message, err.response.data.message);
-          deleteWithExpiry(USER_TOKEN_NAME);
+          removeItem(USER_TOKEN_NAME);
           commit(AUTH_ERROR, err);
           throw err
         })
         .then(() => dispatch(AUTH_REFRESH))
   },
   async [AUTH_LOGOUT]({commit}) {
-    deleteWithExpiry(USER_TOKEN_NAME);
+    removeItem(USER_TOKEN_NAME);
     cleanAuthorizationHeader();
     commit(AUTH_LOGOUT);
   },
   async [AUTH_REFRESH]({commit, dispatch}) {
     try {
-      const token = getOrThrowIfExpired(USER_TOKEN_NAME);
+      const token = getItemOrThrow(USER_TOKEN_NAME);
       setAuthorizationHeader("Bearer " + token);
 
       await authApi.userInfo()

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <AddEmployeeForm v-if="isAddUserAllowed"/>
+    <AddEmployeeForm v-if="isAddEmployeeAllowed"/>
     <EmployeeList/>
   </div>
 </template>
@@ -17,7 +17,7 @@
       EmployeeList
     },
     computed: {
-      isAddUserAllowed: function () {
+      isAddEmployeeAllowed: function () {
         return this.$store.getters.employeePermissions[ADD_EMPLOYEE]
       }
     }
