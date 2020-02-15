@@ -13,10 +13,9 @@ api.interceptors.response.use(response => response, async function (error) {
     await store.dispatch(AUTH_LOGOUT)
         .then(() => {
           debug("Token is bad or expired!");
-          throw error;
         });
   }
-  return error;
+  return Promise.reject(error);
 });
 
 export function cleanAuthorizationHeader() {
