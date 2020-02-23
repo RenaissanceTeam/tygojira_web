@@ -1,21 +1,27 @@
 <template>
   <v-app id="app">
-    <div>
-      <Header v-if="isAuthenticated"/>
-      <router-view/>
-    </div>
+    <AppSideNavigation v-if="isAuthenticated"/>
+
+    <AppBar v-if="isAuthenticated"/>
+
+    <AppContent/>
+
   </v-app>
 </template>
 
 <script>
-  import Header from './components/layout/Header.vue'
+  import AppBar from "./layout/AppBar";
   import {AUTH_REFRESH} from "./data/constants/auth_constants";
   import {debug, debugError} from "./utils/logging";
+  import AppSideNavigation from "./layout/AppSideNavigation";
+  import AppContent from "./layout/AppContent";
 
   export default {
     name: 'app',
     components: {
-      Header
+      AppSideNavigation,
+      AppBar,
+      AppContent
     },
     computed: {
       isAuthenticated: function () {
@@ -38,7 +44,6 @@
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-align: center;
     color: #2c3e50;
   }
 </style>

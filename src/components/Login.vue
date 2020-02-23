@@ -14,7 +14,7 @@
                   sm="8"
                   md="4"
           >
-            <v-card class="elevation-12">
+            <v-card class="elevation-12" @keyup.enter="doLogin">
               <v-toolbar
                       color="primary"
                       dark
@@ -28,7 +28,7 @@
                   <v-text-field
                           label="Login"
                           name="login"
-                          prepend-icon="mdi-lock"
+                          prepend-icon="mdi-account"
                           type="text"
                           required
                           :rules="[v => !!v || 'Login is required']"
@@ -39,7 +39,7 @@
                           id="password"
                           label="Password"
                           name="password"
-                          prepend-icon="mdi-account"
+                          prepend-icon="mdi-lock"
                           type="password"
                           required
                           autocomplete="on"

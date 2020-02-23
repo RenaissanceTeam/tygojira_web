@@ -8,12 +8,16 @@ import {
 } from "../constants/employee_constants";
 import employeeApi from "../../api/employee_api";
 import {debug, debugError} from "../../utils/logging";
+import {EmployeeDto, EmployeeWithRoleDto} from "../dto/employee_dto";
 
 const state = {
+  employee: new EmployeeDto("", "", "", "", "", ""),
   roles: []
 };
 
 const getters = {
+  sessionEmployee: state => state.employee,
+
   isEmployee: state => state.roles.includes(BUSINESS_ROLE.EMPLOYEE),
   isProjectLead: state => state.roles.includes(BUSINESS_ROLE.PROJECT_LEAD),
   isLinearLead: state => state.roles.includes(BUSINESS_ROLE.LINEAR_LEAD),
@@ -32,11 +36,12 @@ const getters = {
 
 const actions = {
   async [CALLING_EMPLOYEE]({commit, rootGetters}) {
-    await employeeApi.getEmployeeRole(rootGetters.username)
+    const username = rootGetters.username;
+    await employeeApi.getEmployeeRole(username)
         .then(response => {
           const employeeRoleResponse = response.data;
           debug(CALLING_EMPLOYEE, "employeeRoleResponse:", employeeRoleResponse);
-          commit(CALLING_EMPLOYEE, employeeRoleResponse.roles)
+          commit(CALLING_EMPLOYEE, employeeRoleResponse)
         })
         .catch(err => {
           debugError(CALLING_EMPLOYEE, err.message, err.response.data.message);
@@ -44,15 +49,26 @@ const actions = {
           if (rootGetters.isUser) {
             throw err;
           } else {
-            commit(CALLING_EMPLOYEE, []);
+            commit(CALLING_EMPLOYEE, new EmployeeWithRoleDto(
+                new EmployeeDto(
+                    username,
+                    username,
+                    rootGetters.systemUserRole,
+                    username,
+                    "",
+                    ""
+                ),
+                []
+            ));
           }
         });
   }
 };
 
 const mutations = {
-  [CALLING_EMPLOYEE](state, roles) {
-    state.roles = roles;
+  [CALLING_EMPLOYEE](state, employeeRole) {
+    state.employee = employeeRole.employee;
+    state.roles = employeeRole.roles;
   }
 };
 
