@@ -15,6 +15,8 @@
               multiple
               chips
               :label="label"
+              :hint="hint"
+              @click:clear="clear"
               readonly
               v-on="on"
       >
@@ -52,16 +54,12 @@
     props: {
       label: {
         type: String,
+        default: ""
+      },
+      hint: {
+        type: String,
         default: "Выберите несколько дат или интервалов"
-      },
-      selectedDates: {
-        type: Object,
-        default: function () {
-          return {
-            selectedDates: []
-          }
-        }
-      },
+      }
     },
     data: function () {
       return {
@@ -74,9 +72,7 @@
       apply() {
         this.datesRange = this.datesRange.sort();
         this.dates.push(this.datesRange);
-        this.$emit("input", {
-          selectedDates: this.dates
-        });
+        this.$emit("input", this.dates);
         this.datesRange = [];
         this.$refs.menu.save(this.dates);
       },
@@ -84,12 +80,14 @@
         this.menu = false;
         this.datesRange = [];
       },
+      clear() {
+        this.dates = [];
+        this.$emit("input", this.dates);
+      },
       remove(item) {
         this.dates.splice(this.dates.indexOf(item), 1);
         this.dates = [...this.dates];
-        this.$emit("input", {
-          selectedDates: this.dates
-        });
+        this.$emit("input", this.dates);
       },
       dateRangeText(dateRange) {
         return dateRange.join(" ~ ");
