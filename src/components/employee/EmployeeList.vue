@@ -1,67 +1,68 @@
 <template>
-  <div>
-    <v-list>
-      <EmployeeItem
-              v-for="employee in employees"
-              v-bind:key="employee.id"
-              :employee="employee"
-      />
-    </v-list>
+  <v-container>
+    <v-card>
+      <v-card-title>
+        Сотрудники компании
+        <AddEmployeeForm class="px-2"/>
+      </v-card-title>
+      <v-card-actions>
+        <v-row>
+          <v-col cols="12" sm="12">
+            <v-list>
+              <v-divider/>
+              <EmployeeItem
+                  v-for="employee in employees"
+                  v-bind:key="employee.id"
+                  :employee="employee"
+              />
+            </v-list>
+          </v-col>
 
-    <v-pagination
-            v-model="currentPage"
-            :length="totalPages"
-            @input="updateEmployees"
-    />
-  </div>
+          <v-pagination
+              v-model="currentPage"
+              :length="totalPages"
+              @input="getNextEmployees"
+          />
+        </v-row>
+      </v-card-actions>
+    </v-card>
+  </v-container>
 </template>
 
 <script>
-  import employeeApi from "../../api/employee_api";
-  import {Order, PageRequest, Sort} from "../../data/dto/pagination_dto";
-  import {FullEmployeeInfoDtoFields} from "../../data/dto/employee_dto";
-  import {debug, debugError} from "../../utils/logging";
   import {GET_EMPLOYEES} from "../../data/constants/employee_constants";
   import EmployeeItem from "./EmployeeItem";
+  import AddEmployeeForm from "./AddEmployeeForm";
 
   export default {
     name: "EmployeeList",
     components: {
+      AddEmployeeForm,
       EmployeeItem
     },
     data: () => ({
-      employeesPerPage: 40,
+      employeesPerPage: 14,
       currentPage: 0,
       totalEmployees: 0,
-      totalPages: 0,
-      employees: []
+      totalPages: 0
     }),
     methods: {
-      updateEmployees: async function (page) {
-        await employeeApi.getEmployees(new PageRequest(
-            page - 1,
-            this.employeesPerPage,
-            new Sort(Order.ASCENDING, [
-                  FullEmployeeInfoDtoFields.lastName,
-                  FullEmployeeInfoDtoFields.firstName,
-                  FullEmployeeInfoDtoFields.middleName
-                ]
-            ))
-        ).then(response => {
-          const employeesPageResponse = response.data;
-          debug(GET_EMPLOYEES, "employeesPageResponse:", employeesPageResponse);
-
-          this.currentPage = page;
-          this.totalPages = employeesPageResponse.totalPages;
-          this.totalEmployees = employeesPageResponse.totalItems;
-          this.employees = employeesPageResponse.items;
-        }).catch(err => {
-          debugError(GET_EMPLOYEES, err.message, err.response.data.message);
-        })
+      getNextEmployees: async function (page) {
+        await this.$store.dispatch(GET_EMPLOYEES, {page: page - 1, employeesPerPage: this.employeesPerPage})
+          .then(employeesPage => {
+            this.currentPage = page;
+            this.totalPages = employeesPage.totalPages;
+            this.totalEmployees = employeesPage.totalItems;
+          })
       }
     },
     mounted() {
-      this.updateEmployees(1)
+      this.getNextEmployees(1)
+    },
+    computed: {
+      employees: function () {
+        return this.$store.getters.loadedEmployees;
+      }
     }
   }
 </script>

@@ -8,20 +8,27 @@ import {
 } from "../constants/employee_constants";
 import employeeApi from "../../api/employee_api";
 import {debug, debugError} from "../../utils/logging";
-import {EmployeeDto, EmployeeWithRoleDto} from "../dto/employee_dto";
+import {EmployeeDto, EmployeeWithRoleDto, FullEmployeeInfoDtoFields} from "../dto/employee_dto";
+import {Order, PageRequest, Sort} from "../dto/pagination_dto";
 
 const state = {
-  employee: new EmployeeDto("", "", "", "", "", ""),
-  roles: []
+  sessionEmployee: new EmployeeDto("", "", "", "", "", ""),
+  sessionRoles: [],
+
+  isEmployeeFilterActive: false,
+  loadedEmployees: [],
 };
 
 const getters = {
-  sessionEmployee: state => state.employee,
+  sessionEmployee: state => state.sessionEmployee,
 
-  isEmployee: state => state.roles.includes(BUSINESS_ROLE.EMPLOYEE),
-  isProjectLead: state => state.roles.includes(BUSINESS_ROLE.PROJECT_LEAD),
-  isLinearLead: state => state.roles.includes(BUSINESS_ROLE.LINEAR_LEAD),
-  isProjectOffice: state => state.roles.includes(BUSINESS_ROLE.PROJECT_OFFICE),
+  isEmployeeFilterActive: state => state.isEmployeeFilterActive,
+  loadedEmployees: state => state.loadedEmployees,
+
+  isEmployee: state => state.sessionRoles.includes(BUSINESS_ROLE.EMPLOYEE),
+  isProjectLead: state => state.sessionRoles.includes(BUSINESS_ROLE.PROJECT_LEAD),
+  isLinearLead: state => state.sessionRoles.includes(BUSINESS_ROLE.LINEAR_LEAD),
+  isProjectOffice: state => state.sessionRoles.includes(BUSINESS_ROLE.PROJECT_OFFICE),
 
   employeePermissions: (state, rootGetters) => {
     return {
@@ -62,13 +69,51 @@ const actions = {
             ));
           }
         });
+  },
+  async [GET_EMPLOYEES]({commit}, {page, employeesPerPage}) {
+    return await employeeApi.getEmployees(new PageRequest(
+      page,
+      employeesPerPage,
+      new Sort(Order.ASCENDING, [
+          FullEmployeeInfoDtoFields.lastName,
+          FullEmployeeInfoDtoFields.firstName,
+          FullEmployeeInfoDtoFields.middleName
+        ]
+      ))
+    ).then(response => {
+      const employeesPageResponse = response.data;
+      debug(GET_EMPLOYEES, "employeesPageResponse:", employeesPageResponse);
+      commit(GET_EMPLOYEES, employeesPageResponse.items);
+      return employeesPageResponse;
+    }).catch(err => {
+      debugError(GET_EMPLOYEES, err.message, err.response.data.message);
+      throw err;
+    })
+  },
+  async [ADD_EMPLOYEE]({commit}, employeeWithRole) {
+    await employeeApi.addEmployee(employeeWithRole)
+      .then(() => {
+        debug(ADD_EMPLOYEE, "Employee added", employeeWithRole);
+        commit(ADD_EMPLOYEE, employeeWithRole.employee);
+      }).catch(err => {
+        debugError(ADD_EMPLOYEE, err.message, err.response.data.message);
+        throw err;
+      });
   }
 };
 
 const mutations = {
+  [GET_EMPLOYEES](state, loadedEmployees) {
+    state.loadedEmployees = loadedEmployees;
+  },
   [CALLING_EMPLOYEE](state, employeeRole) {
-    state.employee = employeeRole.employee;
-    state.roles = employeeRole.roles;
+    state.sessionEmployee = employeeRole.employee;
+    state.sessionRoles = employeeRole.roles;
+  },
+  [ADD_EMPLOYEE](state, employee) {
+    if (!state.isEmployeeFilterActive) {
+      state.loadedEmployees = [employee, ...state.loadedEmployees];
+    }
   }
 };
 

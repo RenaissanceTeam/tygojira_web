@@ -1,11 +1,14 @@
 <template>
-  <v-list-item>
-    <v-list-item-content>
-      <v-list-item-title
-              v-text="title"
-      />
-    </v-list-item-content>
-  </v-list-item>
+  <div>
+    <v-list-item link>
+      <v-list-item-content>
+        <v-list-item-title
+            v-text="title"
+        />
+      </v-list-item-content>
+    </v-list-item>
+    <v-divider/>
+  </div>
 </template>
 
 <script>

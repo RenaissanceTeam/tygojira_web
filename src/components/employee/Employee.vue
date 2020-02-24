@@ -1,25 +1,34 @@
 <template>
-  <div>
-    <AddEmployeeForm v-if="isAddEmployeeAllowed"/>
-    <EmployeeList/>
-  </div>
+  <v-container>
+    <v-row>
+      <v-col
+          cols="12"
+          sm="6"
+      >
+        <EmployeeFilteredList v-if="$store.getters.isEmployeeFilterActive"/>
+        <EmployeeList v-else/>
+      </v-col>
+      <v-col
+          cols="12"
+          sm="6"
+      >
+        <EmployeeFilterForm/>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
   import EmployeeList from "./EmployeeList";
-  import AddEmployeeForm from "./AddEmployeeForm";
-  import {ADD_EMPLOYEE} from "../../data/constants/employee_constants";
+  import EmployeeFilterForm from "./EmployeeFilterForm";
+  import EmployeeFilteredList from "./EmployeeFilteredList";
 
   export default {
     name: "Employee",
     components: {
-      AddEmployeeForm,
+      EmployeeFilteredList,
+      EmployeeFilterForm,
       EmployeeList
-    },
-    computed: {
-      isAddEmployeeAllowed: function () {
-        return this.$store.getters.employeePermissions[ADD_EMPLOYEE]
-      }
     }
   }
 </script>

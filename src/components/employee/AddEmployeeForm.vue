@@ -1,47 +1,47 @@
 <template>
-  <v-row justify="center">
+  <v-row justify="end">
     <v-dialog v-model="dialog" persistent max-width="600px">
       <template v-slot:activator="{ on }">
-        <v-btn color="primary" v-on="on">Add employee</v-btn>
+        <v-btn small color="primary" v-on="on">Добавить</v-btn>
       </template>
       <v-card>
         <v-card-title>
-          <span class="headline">Enter employee details</span>
+          <span class="headline">Введите данные сотрудника</span>
         </v-card-title>
         <v-card-text>
           <v-container>
             <v-row>
               <v-col cols="12" sm="6" md="4">
                 <v-text-field
-                        label="First name"
-                        v-model="firstName"
-                        required
-                />
-              </v-col>
-              <v-col cols="12" sm="6" md="4">
-                <v-text-field
-                        label="Middle name"
-                        v-model="middleName"
-                        required
-                />
-              </v-col>
-              <v-col cols="12" sm="6" md="4">
-                <v-text-field
-                        label="Last name"
+                        label="Фамилия"
                         v-model="lastName"
                         required
                 />
               </v-col>
+              <v-col cols="12" sm="6" md="4">
+                <v-text-field
+                    label="Имя"
+                    v-model="firstName"
+                    required
+                />
+              </v-col>
+              <v-col cols="12" sm="6" md="4">
+                <v-text-field
+                    label="Отчество"
+                    v-model="middleName"
+                    required
+                />
+              </v-col>
               <v-col cols="12" sm="6">
                 <v-text-field
-                        label="Position"
+                        label="Должность"
                         v-model="position"
                         required
                 />
               </v-col>
               <v-col cols="12" sm="6">
                 <v-text-field
-                        label="Subdivision"
+                        label="Подразделение"
                         v-model="subdivision"
                         required
                 />
@@ -76,9 +76,7 @@
 
 <script>
   import {ADD_EMPLOYEE, BUSINESS_ROLE} from "../../data/constants/employee_constants";
-  import employeeApi from "../../api/employee_api"
   import {EmployeeDto, EmployeeWithRoleDto} from "../../data/dto/employee_dto";
-  import {debugError} from "../../utils/logging";
 
   export default {
     name: "AddEmployeeForm",
@@ -107,14 +105,10 @@
             ),
             this.roles
         );
-        await employeeApi.addEmployee(employee)
+        await this.$store.dispatch(ADD_EMPLOYEE, employee)
             .then(() => {
-              // todo: update employee list?
               this.dialog = false;
             })
-            .catch(err => {
-              debugError(ADD_EMPLOYEE, err.message, err.response.data.message);
-            });
       },
       close: function () {
         this.firstName = "";
