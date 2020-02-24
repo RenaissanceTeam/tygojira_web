@@ -69,8 +69,8 @@
 </template>
 
 <script>
-  import {AUTH_REQUEST} from "../data/constants/auth_constants";
-  import {Credentials} from "../data/dto/auth_dto";
+  import {AUTH_REQUEST} from "../../data/constants/auth_constants";
+  import {Credentials} from "../../data/dto/auth_dto";
 
   export default {
     data: () => ({
