@@ -86,7 +86,6 @@
       },
       remove(item) {
         this.dates.splice(this.dates.indexOf(item), 1);
-        this.dates = [...this.dates];
         this.$emit("input", this.dates);
       },
       dateRangeText(dateRange) {

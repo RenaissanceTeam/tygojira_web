@@ -5,8 +5,7 @@
           cols="12"
           sm="6"
       >
-        <EmployeeFilteredList v-if="$store.getters.isEmployeeFilterActive"/>
-        <EmployeeList v-else/>
+        <EmployeeList/>
       </v-col>
       <v-col
           cols="12"
@@ -21,12 +20,10 @@
 <script>
   import EmployeeList from "./EmployeeList";
   import EmployeeFilterForm from "./EmployeeFilterForm";
-  import EmployeeFilteredList from "./EmployeeFilteredList";
 
   export default {
     name: "Employee",
     components: {
-      EmployeeFilteredList,
       EmployeeFilterForm,
       EmployeeList
     }

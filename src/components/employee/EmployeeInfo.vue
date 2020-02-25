@@ -2,6 +2,15 @@
   <v-card outlined>
     <v-card-title>
       {{title}}
+      <v-spacer/>
+      <v-btn
+          class="justify-center"
+          small
+          color="error"
+          v-on:click="deleteEmployee"
+      >
+        Удалить
+      </v-btn>
     </v-card-title>
     <v-card-text>
       <v-list>
@@ -30,21 +39,25 @@
 </template>
 
 <script>
+  import {DELETE_EMPLOYEE} from "../../data/constants/employee_constants";
+  import {EMPTY_FULL_EMPLOYEE_INFO_DTO} from "../../data/dto/employee_dto";
+
   export default {
     props: {
-      employee: {
-        type: Object,
-        required: true
-      },
       title: {
         type: String,
         default: ""
       }
     },
     name: "EmployeeInfo",
-    data: function () {
+    data() {
       return {
-        employeeItems: [
+        employee: EMPTY_FULL_EMPLOYEE_INFO_DTO,
+      }
+    },
+    computed: {
+      employeeItems: function () {
+        return [
           {
             key: "ФИО",
             value: `${this.employee.lastName} ${this.employee.firstName} ${this.employee.middleName}`,
@@ -64,9 +77,20 @@
             key: "Навыки",
             value: this.employee.skills.join(", "),
             icon: "mdi-clipboard-text-outline"
-          },
+          }
         ]
       }
+    },
+    methods: {
+      deleteEmployee: function () {
+        this.$store.dispatch(DELETE_EMPLOYEE, this.employee)
+          .then(() => {
+            this.$emit('employee-deleted')
+          })
+      }
+    },
+    beforeMount() {
+      this.employee = this.$store.getters.selectedEmployee;
     }
   }
 </script>

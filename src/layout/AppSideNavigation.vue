@@ -62,8 +62,8 @@
     name: "AppSideNavigation",
     data: () => ({
       navigationItems: [
-        {title: "Личный кабинет", icon: "mdi-home-account", link: "/about"},
-        {title: "Календарь", icon: "mdi-calendar-account-outline", link: "/employee"}
+        {title: "Личный кабинет", icon: "mdi-home-account", link: ""},
+        {title: "Календарь", icon: "mdi-calendar-account-outline", link: ""}
       ]
     }),
     computed: {

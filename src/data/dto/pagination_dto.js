@@ -3,17 +3,13 @@ export const Order = {
   DESCENDING: "DESCENDING"
 };
 
-export class Sort {
-  constructor(order, fields) {
-    this.order  = order;
-    this.fields = fields;
-  }
-}
-
-export class PageRequest {
-  constructor(page, size, sort) {
-    this.page = page;
-    this.size = size;
-    this.sort = sort;
+export function paginationParams(page, size, order, orderBy) {
+  return {
+    params: {
+      page: page,
+      size: size,
+      order: order,
+      orderBy: orderBy.join(",")
+    }
   }
 }

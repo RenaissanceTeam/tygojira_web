@@ -3,7 +3,8 @@
     <v-card>
       <v-card-title>
         Сотрудники компании
-        <AddEmployeeForm class="px-2"/>
+        <v-spacer/>
+        <AddEmployeeForm class="px-2" v-if="isAddEmployeeAllowed"/>
       </v-card-title>
       <v-card-actions>
         <v-row>
@@ -30,7 +31,11 @@
 </template>
 
 <script>
-  import {GET_EMPLOYEES} from "../../data/constants/employee_constants";
+  import {
+    GET_EMPLOYEES,
+    SELECT_PAGE,
+    ADD_EMPLOYEE
+  } from "../../data/constants/employee_constants";
   import EmployeeItem from "./EmployeeItem";
   import AddEmployeeForm from "./AddEmployeeForm";
 
@@ -41,27 +46,33 @@
       EmployeeItem
     },
     data: () => ({
-      employeesPerPage: 14,
-      currentPage: 0,
-      totalEmployees: 0,
-      totalPages: 0
+      employeesPerPage: 14
     }),
     methods: {
       getNextEmployees: async function (page) {
-        await this.$store.dispatch(GET_EMPLOYEES, {page: page - 1, employeesPerPage: this.employeesPerPage})
-          .then(employeesPage => {
-            this.currentPage = page;
-            this.totalPages = employeesPage.totalPages;
-            this.totalEmployees = employeesPage.totalItems;
-          })
+        await this.$store.dispatch(GET_EMPLOYEES, {page: page, employeesPerPage: this.employeesPerPage});
       }
     },
     mounted() {
       this.getNextEmployees(1)
     },
     computed: {
+      currentPage: {
+        get: function () {
+          return this.$store.getters.currentPage;
+        },
+        set: function (page) {
+          this.$store.dispatch(SELECT_PAGE, page);
+        }
+      },
+      totalPages: function() {
+        return this.$store.getters.totalPages;
+      },
       employees: function () {
         return this.$store.getters.loadedEmployees;
+      },
+      isAddEmployeeAllowed: function () {
+        return this.$store.getters.employeePermissions[ADD_EMPLOYEE];
       }
     }
   }

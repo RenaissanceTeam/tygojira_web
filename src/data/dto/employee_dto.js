@@ -9,6 +9,18 @@ export const FullEmployeeInfoDtoFields = {
   workRoles: "workRoles"
 };
 
+export class FullEmployeeInfoDto {
+  constructor(id, firstName, middleName, lastName, position, subdivision, skills) {
+    this.id          = id;
+    this.firstName   = firstName;
+    this.middleName  = middleName;
+    this.lastName    = lastName;
+    this.position    = position;
+    this.subdivision = subdivision;
+    this.skills      = skills;
+  }
+}
+
 export class EmployeeDto {
   constructor(username, firstName, lastName, middleName, position, subdivision) {
     this.username    = username;
@@ -33,3 +45,6 @@ export class UpdateEmployeeInfoDto {
     this.workRoles = workRoles;
   }
 }
+
+export const EMPTY_EMPLOYEE_DTO = new EmployeeDto("", "", "", "", "", "");
+export const EMPTY_FULL_EMPLOYEE_INFO_DTO = new FullEmployeeInfoDto("", "", "", "", "", "", []);
