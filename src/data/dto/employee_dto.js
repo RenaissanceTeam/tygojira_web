@@ -40,6 +40,17 @@ export class EmployeeWithRoleDto {
   }
 }
 
+export class EmployeeFilter {
+  constructor(firstName, middleName, lastName, position, subdivision, skills, availableOn) {
+    this.firstName   = firstName;
+    this.middleName  = middleName;
+    this.lastName    = lastName;
+    this.position    = position;
+    this.skills      = skills;
+    this.availableOn = availableOn;
+  }
+}
+
 export class UpdateEmployeeInfoDto {
   constructor(skills, workRoles) {
     this.skills    = skills;

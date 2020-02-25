@@ -6,43 +6,57 @@
         <v-row>
           <v-col cols="12" sm="6" md="4">
             <v-text-field
-                    label="Фамилия"
+                label="Фамилия"
+                v-model="lastName"
             />
           </v-col>
           <v-col cols="12" sm="6" md="4">
             <v-text-field
-                    label="Имя"
+                label="Имя"
+                v-model="firstName"
             />
           </v-col>
           <v-col cols="12" sm="6" md="4">
             <v-text-field
-                    label="Отчество"
+                label="Отчество"
+                v-model="middleName"
             />
           </v-col>
           <v-col cols="12" sm="6">
             <v-text-field
-                    label="Должность"
+                label="Должность"
+                v-model="position"
             />
           </v-col>
           <v-col cols="12" sm="6">
             <v-text-field
-                    label="Подразделение"
+                label="Подразделение"
+                v-model="subdivision"
             />
           </v-col>
           <v-col cols="12" sm="12">
-            <ChipsCombobox label="Навыки" v-model="skills"/>
+            <ChipsCombobox
+                label="Навыки"
+                v-model="skills"
+            />
           </v-col>
           <v-col cols="12" sm="12">
-            <RangeAndSingleDatePicker label="Доступные даты" v-model="dates"/>
+            <RangeAndSingleDatePicker
+                label="Доступные даты"
+                v-model="dates"
+            />
           </v-col>
           <v-col cols="12" sm="6" class="text-left">
-            <v-btn>
+            <v-btn
+              v-on:click="clearFilter"
+            >
               Очистить фильтр
             </v-btn>
           </v-col>
           <v-col cols="12" sm="6" class="text-right">
             <v-btn
-                    color="primary"
+                color="primary"
+                v-on:click="filter"
             >
               Применить фильтр
             </v-btn>
@@ -56,14 +70,44 @@
 <script>
   import RangeAndSingleDatePicker from "../custom/datepicker/RangeAndSingleDatePicker";
   import ChipsCombobox from "../custom/combobox/ChipsCombobox";
+  import {FILTER_EMPLOYEES, GET_EMPLOYEES} from "../../data/constants/employee_constants";
+  import {EmployeeFilter} from "../../data/dto/employee_dto";
 
   export default {
     name: "EmployeeFilterForm",
     components: {ChipsCombobox, RangeAndSingleDatePicker},
     data: () => ({
+      firstName: "",
+      middleName: "",
+      lastName: "",
+      position: "",
+      subdivision: "",
+      skills: [],
       dates: [],
-      skills: []
-    })
+    }),
+    methods: {
+      filter: function () {
+        this.$store.dispatch(FILTER_EMPLOYEES, new EmployeeFilter(
+          this.firstName,
+          this.middleName,
+          this.lastName,
+          this.position,
+          this.subdivision,
+          this.skills,
+          [] // fixme: on backend ready
+        ));
+      },
+      clearFilter: function () {
+        this.firstName = "";
+        this.middleName = "";
+        this.lastName = "";
+        this.position = "";
+        this.subdivision = "";
+        this.skills = [];
+        this.dates = [];
+        this.$store.dispatch(GET_EMPLOYEES, 1)
+      }
+    }
   }
 </script>
 

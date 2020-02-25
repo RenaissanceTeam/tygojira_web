@@ -12,55 +12,56 @@
           <v-row>
             <v-col cols="12" sm="6" md="4">
               <v-text-field
-                  label="Фамилия"
+                  label="Фамилия*"
                   v-model="lastName"
-                  required
+                  :rules="required('Фамилия')"
               />
             </v-col>
             <v-col cols="12" sm="6" md="4">
               <v-text-field
-                  label="Имя"
+                  label="Имя*"
                   v-model="firstName"
-                  required
+                  :rules="required('Имя')"
               />
             </v-col>
             <v-col cols="12" sm="6" md="4">
               <v-text-field
                   label="Отчество"
                   v-model="middleName"
-                  required
               />
             </v-col>
             <v-col cols="12" sm="6">
               <v-text-field
                   label="Должность"
                   v-model="position"
-                  required
               />
             </v-col>
             <v-col cols="12" sm="6">
               <v-text-field
                   label="Подразделение"
                   v-model="subdivision"
-                  required
               />
             </v-col>
             <v-col cols="12" sm="12">
-              <ChipsCombobox label="Навыки" v-model="skills"/>
+              <ChipsCombobox
+                  label="Навыки"
+                  v-model="skills"
+              />
             </v-col>
             <v-col cols="12" sm="6">
               <v-text-field
-                  label="Username"
+                  label="Имя пользователя*"
                   v-model="username"
-                  required
+                  :rules="required('Имя пользователя')"
               />
             </v-col>
             <v-col cols="12" sm="6">
               <v-autocomplete
                   :items="allRoles"
-                  label="Roles"
+                  label="Роли*"
                   v-model="roles"
                   multiple
+                  :rules="requiredNonEmptyArray('Роли')"
               />
             </v-col>
           </v-row>
@@ -69,7 +70,14 @@
       <v-card-actions>
         <v-spacer/>
         <v-btn color="primary" text @click="close">Close</v-btn>
-        <v-btn color="primary" text @click="save">Save</v-btn>
+        <v-btn
+            color="primary"
+            text
+            @click="save"
+            :disabled="!areRequiredFieldsSpecified"
+        >
+          Save
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -96,6 +104,13 @@
       username: "",
       roles: []
     }),
+    computed: {
+      areRequiredFieldsSpecified() {
+        const requiredFields = [this.firstName, this.lastName, this.username];
+        const notSpecified = requiredFields.find(field => !!field);
+        return !!notSpecified && !!this.roles.length;
+      }
+    },
     methods: {
       save: async function () {
         const employee = new EmployeeWithRoleDto(
@@ -121,8 +136,15 @@
         this.lastName = "";
         this.username = "";
         this.subdivision = "";
+        this.skills = [];
         this.roles = [];
         this.dialog = false;
+      },
+      required: function (name) {
+        return [value => !!value || `${name} required`];
+      },
+      requiredNonEmptyArray: function (name) {
+        return [v => !!v.length || `${name} required`];
       }
     }
   }

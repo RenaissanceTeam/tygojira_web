@@ -45,12 +45,9 @@
       AddEmployeeForm,
       EmployeeItem
     },
-    data: () => ({
-      employeesPerPage: 14
-    }),
     methods: {
-      getNextEmployees: async function (page) {
-        await this.$store.dispatch(GET_EMPLOYEES, {page: page, employeesPerPage: this.employeesPerPage});
+      getNextEmployees: function (page) {
+        this.$store.dispatch(GET_EMPLOYEES, page);
       }
     },
     mounted() {

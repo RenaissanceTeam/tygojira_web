@@ -7,7 +7,9 @@ import {
   BUSINESS_ROLE,
   SELECT_EMPLOYEE,
   UNSELECT_EMPLOYEE,
-  SELECT_PAGE
+  SELECT_PAGE,
+  FILTER_EMPLOYEES,
+  EMPLOYEES_PER_PAGE
 } from "../constants/employee_constants";
 import employeeApi from "../../api/employee_api";
 import {debug, debugError} from "../../utils/logging";
@@ -87,10 +89,10 @@ const actions = {
         }
       });
   },
-  async [GET_EMPLOYEES]({commit}, {page, employeesPerPage}) {
-    return await employeeApi.getEmployees(
+  async [GET_EMPLOYEES]({commit}, page) {
+    employeeApi.getEmployees(
       page - 1,
-      employeesPerPage,
+      EMPLOYEES_PER_PAGE,
       Order.ASCENDING,
       [
         FullEmployeeInfoDtoFields.lastName,
@@ -103,6 +105,26 @@ const actions = {
       commit(GET_EMPLOYEES, employeesPageResponse);
     }).catch(err => {
       debugError(GET_EMPLOYEES, err.message, err.response.data.message);
+      throw err;
+    })
+  },
+  async [FILTER_EMPLOYEES]({commit}, employeeFilter) {
+    employeeApi.filterEmployees(
+      0,
+      EMPLOYEES_PER_PAGE,
+      Order.ASCENDING,
+      [
+        FullEmployeeInfoDtoFields.lastName,
+        FullEmployeeInfoDtoFields.firstName,
+        FullEmployeeInfoDtoFields.middleName
+      ],
+      employeeFilter
+    ).then(response => {
+      const employeesPageResponse = response.data;
+      debug(FILTER_EMPLOYEES, "employeesPageResponse", employeesPageResponse);
+      commit(FILTER_EMPLOYEES, employeesPageResponse);
+    }).catch(err => {
+      debugError(FILTER_EMPLOYEES, err.message, err.response.data.message);
       throw err;
     })
   },
@@ -142,6 +164,12 @@ const actions = {
 
 const mutations = {
   [GET_EMPLOYEES](state, employeesPageResponse) {
+    state.loadedEmployees = employeesPageResponse.items;
+    state.totalEmployees = employeesPageResponse.totalItems;
+    state.currentPage = employeesPageResponse.currentPage + 1;
+    state.totalPages = employeesPageResponse.totalPages;
+  },
+  [FILTER_EMPLOYEES](state, employeesPageResponse) {
     state.loadedEmployees = employeesPageResponse.items;
     state.totalEmployees = employeesPageResponse.totalItems;
     state.currentPage = employeesPageResponse.currentPage + 1;

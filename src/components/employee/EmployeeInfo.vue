@@ -82,7 +82,7 @@
         ]
       },
       isDeleteEmployeeAllowed: function () {
-        return this.$store.getters.employeePermissions[DELETE_EMPLOYEE];
+        return this.$store.getters.employeePermissions[DELETE_EMPLOYEE] && !!this.employee.id;
       }
     },
     methods: {

@@ -34,6 +34,7 @@
               v-for="(item, i) in navigationItems"
               :key="i"
               :to="item.link"
+              link
         >
         <v-list-item-icon>
           <v-icon>{{item.icon}}</v-icon>

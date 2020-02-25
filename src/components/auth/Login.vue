@@ -31,7 +31,7 @@
                           prepend-icon="mdi-account"
                           type="text"
                           required
-                          :rules="[v => !!v || 'Login is required']"
+                          :rules="required('Login')"
                           v-model="login"
                   />
 
@@ -43,7 +43,7 @@
                           type="password"
                           required
                           autocomplete="on"
-                          :rules="[v => !!v || 'Password is required']"
+                          :rules="required('Password')"
                           v-model="password"
                   />
                 </v-form>
@@ -87,6 +87,9 @@
           this.password = '';
           this.badCredentials = true;
         });
+      },
+      required: function (name) {
+        return [value => !!value || `${name} required`];
       }
     }
   }
