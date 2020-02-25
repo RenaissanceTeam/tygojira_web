@@ -79,7 +79,8 @@ const actions = {
               rootGetters.systemUserRole,
               username,
               "",
-              ""
+              "",
+              []
             ),
             []
           ));

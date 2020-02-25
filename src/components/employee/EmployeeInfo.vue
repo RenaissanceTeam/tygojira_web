@@ -8,6 +8,7 @@
           small
           color="error"
           v-on:click="deleteEmployee"
+          v-if="isDeleteEmployeeAllowed"
       >
         Удалить
       </v-btn>
@@ -79,6 +80,9 @@
             icon: "mdi-clipboard-text-outline"
           }
         ]
+      },
+      isDeleteEmployeeAllowed: function () {
+        return this.$store.getters.employeePermissions[DELETE_EMPLOYEE];
       }
     },
     methods: {

@@ -45,6 +45,9 @@
                   required
               />
             </v-col>
+            <v-col cols="12" sm="12">
+              <ChipsCombobox label="Навыки" v-model="skills"/>
+            </v-col>
             <v-col cols="12" sm="6">
               <v-text-field
                   label="Username"
@@ -75,9 +78,11 @@
 <script>
   import {ADD_EMPLOYEE, BUSINESS_ROLE} from "../../data/constants/employee_constants";
   import {EmployeeDto, EmployeeWithRoleDto} from "../../data/dto/employee_dto";
+  import ChipsCombobox from "../custom/combobox/ChipsCombobox";
 
   export default {
     name: "AddEmployeeForm",
+    components: {ChipsCombobox},
     data: () => ({
       dialog: false,
       allRoles: Object.keys(BUSINESS_ROLE),
@@ -87,6 +92,7 @@
       lastName: "",
       position: "",
       subdivision: "",
+      skills: [],
       username: "",
       roles: []
     }),
@@ -96,10 +102,11 @@
           new EmployeeDto(
             this.username,
             this.firstName,
-            this.lastName,
             this.middleName,
+            this.lastName,
             this.position,
-            this.subdivision
+            this.subdivision,
+            this.skills
           ),
           this.roles
         );

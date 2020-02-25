@@ -22,13 +22,14 @@ export class FullEmployeeInfoDto {
 }
 
 export class EmployeeDto {
-  constructor(username, firstName, lastName, middleName, position, subdivision) {
+  constructor(username, firstName, middleName, lastName, position, subdivision, skills) {
     this.username    = username;
     this.firstName   = firstName;
-    this.lastName    = lastName;
     this.middleName  = middleName;
+    this.lastName    = lastName;
     this.position    = position;
     this.subdivision = subdivision;
+    this.skills      = skills;
   }
 }
 
@@ -46,5 +47,5 @@ export class UpdateEmployeeInfoDto {
   }
 }
 
-export const EMPTY_EMPLOYEE_DTO = new EmployeeDto("", "", "", "", "", "");
+export const EMPTY_EMPLOYEE_DTO = new EmployeeDto("", "", "", "", "", "", []);
 export const EMPTY_FULL_EMPLOYEE_INFO_DTO = new FullEmployeeInfoDto("", "", "", "", "", "", []);
