@@ -3,20 +3,19 @@
           ref="menu"
           v-model="menu"
           :close-on-content-click="false"
-          :return-value.sync="dates"
+          :return-value.sync="value"
           transition="scale-transition"
           offset-y
           min-width="290px"
   >
     <template v-slot:activator="{ on }">
       <v-combobox
-              v-model="dates"
+              v-model="valueInput"
               clearable
               multiple
               chips
               :label="label"
               :hint="hint"
-              @click:clear="clear"
               readonly
               v-on="on"
       >
@@ -52,6 +51,12 @@
   export default {
     name: "RangeAndSingleDatePicker",
     props: {
+      value: {
+        type: Array,
+        default: function () {
+          return [];
+        }
+      },
       label: {
         type: String,
         default: ""
@@ -64,35 +69,38 @@
     data: function () {
       return {
         menu: false,
-        datesRange: [],
-        dates: []
+        datesRange: []
+      }
+    },
+    computed: {
+      valueInput: {
+        get: function () {
+          return this.value;
+        },
+        set: function (value) {
+          this.$emit('input', value);
+        }
       }
     },
     methods: {
       apply() {
         this.datesRange = this.datesRange.sort();
-        this.dates.push(this.datesRange);
-        this.$emit("input", this.dates);
+        this.value.push(this.datesRange);
         this.datesRange = [];
-        this.$refs.menu.save(this.dates);
+        this.$refs.menu.save(this.value);
       },
       cancel() {
         this.menu = false;
         this.datesRange = [];
       },
-      clear() {
-        this.dates = [];
-        this.$emit("input", this.dates);
-      },
       remove(item) {
-        this.dates.splice(this.dates.indexOf(item), 1);
-        this.$emit("input", this.dates);
+        this.value.splice(this.value.indexOf(item), 1);
       },
       dateRangeText(dateRange) {
         return dateRange.join(" ~ ");
       },
       allowedDates(date) {
-        const crossingDate = this.dates.find(dateRange => {
+        const crossingDate = this.value.find(dateRange => {
           return date === dateRange[0] || (date >= dateRange[0] && date <= dateRange[1]);
         });
         return !crossingDate;

@@ -1,12 +1,10 @@
 <template>
   <v-combobox
-          v-model="items"
+          v-model="valueInput"
           chips
           clearable
           :label="label"
           :hint="hint"
-          v-on:change="apply"
-          :search-input.sync="search"
           multiple
   >
     <template v-slot:selection="{ attrs, item, select, selected }">
@@ -27,6 +25,12 @@
   export default {
     name: "ChipsCombobox",
     props: {
+      value: {
+        type: Array,
+        default: function () {
+          return [];
+        }
+      },
       label: {
         type: String,
         default: ""
@@ -36,21 +40,20 @@
         default: "Вводите значения через enter"
       }
     },
-    data() {
-      return {
-        items: [],
-        search: null
+    computed: {
+      valueInput: {
+        get: function () {
+          return this.value;
+        },
+        set: function (value) {
+          this.$emit('input', value);
+        }
       }
     },
     methods: {
-      apply() {
-        this.$emit("input", this.items);
-      },
       remove(item) {
-        this.items.splice(this.items.indexOf(item), 1);
-        this.items = [...this.items];
-        this.$emit("input", this.items);
-      },
+        this.value.splice(this.value.indexOf(item), 1);
+      }
     }
   }
 </script>
