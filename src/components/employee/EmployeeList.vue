@@ -9,7 +9,15 @@
       <v-card-actions>
         <v-row>
           <v-col cols="12" sm="12">
-            <v-list>
+            <v-card
+                outlined
+                v-if="isNoEmployees"
+            >
+              <v-card-text>
+                Сотрудники отсутствуют
+              </v-card-text>
+            </v-card>
+            <v-list v-else>
               <v-divider/>
               <EmployeeItem
                   v-for="employee in employees"
@@ -70,6 +78,9 @@
       },
       isAddEmployeeAllowed: function () {
         return this.$store.getters.employeePermissions[ADD_EMPLOYEE];
+      },
+      isNoEmployees: function () {
+        return !this.$store.getters.loadedEmployees.length;
       }
     }
   }
