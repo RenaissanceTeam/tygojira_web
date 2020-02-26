@@ -22,6 +22,7 @@ const state = {
 const getters = {
   isAuthenticated: state => !!state.token,
   username: state => state.username,
+  systemUserRole: state => state.systemUserRole,
   isUser: (state, rootGetters) => rootGetters.isAuthenticated && state.systemUserRole === SYSTEM_USER_ROLE.USER,
   isAdmin: (state, rootGetters) => rootGetters.isAuthenticated && !rootGetters.isUser && state.systemUserRole === SYSTEM_USER_ROLE.ADMIN,
   isSuperUser: (state, rootGetters) => rootGetters.isAuthenticated && !rootGetters.isAdmin && state.systemUserRole === SYSTEM_USER_ROLE.SUPERUSER

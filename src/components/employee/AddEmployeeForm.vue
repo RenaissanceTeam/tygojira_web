@@ -1,87 +1,96 @@
 <template>
-  <v-row justify="center">
-    <v-dialog v-model="dialog" persistent max-width="600px">
-      <template v-slot:activator="{ on }">
-        <v-btn color="primary" v-on="on">Add employee</v-btn>
-      </template>
-      <v-card>
-        <v-card-title>
-          <span class="headline">Enter employee details</span>
-        </v-card-title>
-        <v-card-text>
-          <v-container>
-            <v-row>
-              <v-col cols="12" sm="6" md="4">
-                <v-text-field
-                        label="First name"
-                        v-model="firstName"
-                        required
-                />
-              </v-col>
-              <v-col cols="12" sm="6" md="4">
-                <v-text-field
-                        label="Middle name"
-                        v-model="middleName"
-                        required
-                />
-              </v-col>
-              <v-col cols="12" sm="6" md="4">
-                <v-text-field
-                        label="Last name"
-                        v-model="lastName"
-                        required
-                />
-              </v-col>
-              <v-col cols="12" sm="6">
-                <v-text-field
-                        label="Position"
-                        v-model="position"
-                        required
-                />
-              </v-col>
-              <v-col cols="12" sm="6">
-                <v-text-field
-                        label="Subdivision"
-                        v-model="subdivision"
-                        required
-                />
-              </v-col>
-              <v-col cols="12" sm="6">
-                <v-text-field
-                        label="Username"
-                        v-model="username"
-                        required
-                />
-              </v-col>
-              <v-col cols="12" sm="6">
-                <v-autocomplete
-                        :items="allRoles"
-                        label="Roles"
-                        v-model="roles"
-                        multiple
-                />
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer/>
-          <v-btn color="primary" text @click="close">Close</v-btn>
-          <v-btn color="primary" text @click="save">Save</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </v-row>
+  <v-dialog v-model="dialog" persistent max-width="600px">
+    <template v-slot:activator="{ on }">
+      <v-btn small color="primary" v-on="on">Добавить</v-btn>
+    </template>
+    <v-card>
+      <v-card-title>
+        <span class="headline">Введите данные сотрудника</span>
+      </v-card-title>
+      <v-card-text>
+        <v-container>
+          <v-row>
+            <v-col cols="12" sm="6" md="4">
+              <v-text-field
+                  label="Фамилия*"
+                  v-model="lastName"
+                  :rules="required('Фамилия')"
+              />
+            </v-col>
+            <v-col cols="12" sm="6" md="4">
+              <v-text-field
+                  label="Имя*"
+                  v-model="firstName"
+                  :rules="required('Имя')"
+              />
+            </v-col>
+            <v-col cols="12" sm="6" md="4">
+              <v-text-field
+                  label="Отчество"
+                  v-model="middleName"
+              />
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-text-field
+                  label="Должность"
+                  v-model="position"
+              />
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-text-field
+                  label="Подразделение"
+                  v-model="subdivision"
+              />
+            </v-col>
+            <v-col cols="12" sm="12">
+              <ChipsCombobox
+                  label="Навыки"
+                  v-model="skills"
+              />
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-text-field
+                  label="Логин*"
+                  v-model="username"
+                  :rules="required('Логин')"
+              />
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-autocomplete
+                  :items="allRoles"
+                  label="Роли*"
+                  v-model="roles"
+                  multiple
+                  :rules="requiredNonEmptyArray('Роли')"
+              />
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer/>
+        <v-btn color="primary" text @click="close">Close</v-btn>
+        <v-btn
+            color="primary"
+            text
+            @click="save"
+            :disabled="!areRequiredFieldsSpecified"
+        >
+          Save
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
   import {ADD_EMPLOYEE, BUSINESS_ROLE} from "../../data/constants/employee_constants";
-  import employeeApi from "../../api/employee_api"
   import {EmployeeDto, EmployeeWithRoleDto} from "../../data/dto/employee_dto";
-  import {debugError} from "../../utils/logging";
+  import ChipsCombobox from "../custom/combobox/ChipsCombobox";
 
   export default {
     name: "AddEmployeeForm",
+    components: {ChipsCombobox},
     data: () => ({
       dialog: false,
       allRoles: Object.keys(BUSINESS_ROLE),
@@ -91,30 +100,35 @@
       lastName: "",
       position: "",
       subdivision: "",
+      skills: [],
       username: "",
       roles: []
     }),
+    computed: {
+      areRequiredFieldsSpecified() {
+        const requiredFields = [this.firstName, this.lastName, this.username];
+        const notSpecified = requiredFields.some(field => !field);
+        return !notSpecified && !!this.roles.length;
+      }
+    },
     methods: {
       save: async function () {
         const employee = new EmployeeWithRoleDto(
-            new EmployeeDto(
-                this.username,
-                this.firstName,
-                this.lastName,
-                this.middleName,
-                this.position,
-                this.subdivision
-            ),
-            this.roles
+          new EmployeeDto(
+            this.username,
+            this.firstName,
+            this.middleName,
+            this.lastName,
+            this.position,
+            this.subdivision,
+            this.skills
+          ),
+          this.roles
         );
-        await employeeApi.addEmployee(employee)
-            .then(() => {
-              // todo: update employee list?
-              this.dialog = false;
-            })
-            .catch(err => {
-              debugError(ADD_EMPLOYEE, err.message, err.response.data.message);
-            });
+        await this.$store.dispatch(ADD_EMPLOYEE, employee)
+          .then(() => {
+            this.dialog = false;
+          })
       },
       close: function () {
         this.firstName = "";
@@ -122,8 +136,15 @@
         this.lastName = "";
         this.username = "";
         this.subdivision = "";
+        this.skills = [];
         this.roles = [];
         this.dialog = false;
+      },
+      required: function (name) {
+        return [value => !!value || `${name} required`];
+      },
+      requiredNonEmptyArray: function (name) {
+        return [v => !!v.length || `${name} required`];
       }
     }
   }

@@ -14,7 +14,7 @@
                   sm="8"
                   md="4"
           >
-            <v-card class="elevation-12">
+            <v-card class="elevation-12" @keyup.enter="doLogin">
               <v-toolbar
                       color="primary"
                       dark
@@ -28,10 +28,10 @@
                   <v-text-field
                           label="Login"
                           name="login"
-                          prepend-icon="mdi-lock"
+                          prepend-icon="mdi-account"
                           type="text"
                           required
-                          :rules="[v => !!v || 'Login is required']"
+                          :rules="required('Login')"
                           v-model="login"
                   />
 
@@ -39,11 +39,11 @@
                           id="password"
                           label="Password"
                           name="password"
-                          prepend-icon="mdi-account"
+                          prepend-icon="mdi-lock"
                           type="password"
                           required
                           autocomplete="on"
-                          :rules="[v => !!v || 'Password is required']"
+                          :rules="required('Password')"
                           v-model="password"
                   />
                 </v-form>
@@ -69,8 +69,8 @@
 </template>
 
 <script>
-  import {AUTH_REQUEST} from "../data/constants/auth_constants";
-  import {Credentials} from "../data/dto/auth_dto";
+  import {AUTH_REQUEST} from "../../data/constants/auth_constants";
+  import {Credentials} from "../../data/dto/auth_dto";
 
   export default {
     data: () => ({
@@ -87,6 +87,9 @@
           this.password = '';
           this.badCredentials = true;
         });
+      },
+      required: function (name) {
+        return [value => !!value || `${name} required`];
       }
     }
   }
