@@ -50,9 +50,9 @@
             </v-col>
             <v-col cols="12" sm="6">
               <v-text-field
-                  label="Имя пользователя*"
+                  label="Логин*"
                   v-model="username"
-                  :rules="required('Имя пользователя')"
+                  :rules="required('Логин')"
               />
             </v-col>
             <v-col cols="12" sm="6">

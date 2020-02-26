@@ -71,22 +71,20 @@ const actions = {
       .catch(err => {
         debugError(CALLING_EMPLOYEE, err.message, err.response.data.message);
 
-        if (rootGetters.isUser) {
-          throw err;
-        } else {
-          commit(CALLING_EMPLOYEE, new EmployeeWithRoleDto(
-            new EmployeeDto(
-              username,
-              username,
-              rootGetters.systemUserRole,
-              username,
-              "",
-              "",
-              []
-            ),
+        if (rootGetters.isUser) throw err;
+
+        commit(CALLING_EMPLOYEE, new EmployeeWithRoleDto(
+          new EmployeeDto(
+            username,
+            username,
+            rootGetters.systemUserRole,
+            username,
+            "",
+            "",
             []
-          ));
-        }
+          ),
+          []
+        ));
       });
   },
   async [GET_EMPLOYEES]({commit}, page) {
