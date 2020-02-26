@@ -181,9 +181,11 @@ const mutations = {
   },
   [ADD_EMPLOYEE](state, employee) {
     state.loadedEmployees = [employee, ...state.loadedEmployees];
+    state.totalEmployees++;
   },
   [DELETE_EMPLOYEE](state, deletedEmployee) {
     state.loadedEmployees.splice(state.loadedEmployees.indexOf(deletedEmployee), 1);
+    state.totalEmployees--;
   },
   [SELECT_EMPLOYEE](state, selectedEmployee) {
     state.selectedEmployee = selectedEmployee;

@@ -15,4 +15,4 @@ export const BUSINESS_ROLE = {
   PROJECT_OFFICE: "PROJECT_OFFICE"
 };
 
-export const EMPLOYEES_PER_PAGE = 14;
+export const EMPLOYEES_PER_PAGE = 13;

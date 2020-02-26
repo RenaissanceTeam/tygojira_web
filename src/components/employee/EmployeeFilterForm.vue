@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-card>
-      <v-card-title>Фильтрация</v-card-title>
+      <v-card-title>Найти сотрудников</v-card-title>
       <v-card-actions>
         <v-row>
           <v-col cols="12" sm="6" md="4">
@@ -40,12 +40,6 @@
                 v-model="skills"
             />
           </v-col>
-          <v-col cols="12" sm="12">
-            <RangeAndSingleDatePicker
-                label="Доступные даты"
-                v-model="dates"
-            />
-          </v-col>
           <v-col cols="12" sm="6" class="text-left">
             <v-btn
               v-on:click="clearFilter"
@@ -68,14 +62,15 @@
 </template>
 
 <script>
-  import RangeAndSingleDatePicker from "../custom/datepicker/RangeAndSingleDatePicker";
   import ChipsCombobox from "../custom/combobox/ChipsCombobox";
   import {FILTER_EMPLOYEES, GET_EMPLOYEES} from "../../data/constants/employee_constants";
   import {EmployeeFilter} from "../../data/dto/employee_dto";
 
   export default {
     name: "EmployeeFilterForm",
-    components: {ChipsCombobox, RangeAndSingleDatePicker},
+    components: {
+      ChipsCombobox
+    },
     data: () => ({
       firstName: "",
       middleName: "",
@@ -83,7 +78,6 @@
       position: "",
       subdivision: "",
       skills: [],
-      dates: [],
     }),
     methods: {
       filter: function () {
@@ -94,7 +88,7 @@
           this.position,
           this.subdivision,
           this.skills,
-          [] // fixme: on backend ready
+          []
         ));
       },
       clearFilter: function () {
@@ -104,7 +98,6 @@
         this.position = "";
         this.subdivision = "";
         this.skills = [];
-        this.dates = [];
         this.$store.dispatch(GET_EMPLOYEES, 1)
       }
     }

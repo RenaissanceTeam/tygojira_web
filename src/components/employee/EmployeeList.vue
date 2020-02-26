@@ -9,15 +9,7 @@
       <v-card-actions>
         <v-row>
           <v-col cols="12" sm="12">
-            <v-card
-                outlined
-                v-if="isNoEmployees"
-            >
-              <v-card-text>
-                Сотрудники отсутствуют
-              </v-card-text>
-            </v-card>
-            <v-list v-else>
+            <v-list>
               <v-divider/>
               <EmployeeItem
                   v-for="employee in employees"
@@ -25,6 +17,9 @@
                   :employee="employee"
               />
             </v-list>
+            <v-card-text>
+              Всего сотрудников: {{totalEmployees}}
+            </v-card-text>
           </v-col>
 
           <v-pagination
@@ -79,8 +74,8 @@
       isAddEmployeeAllowed: function () {
         return this.$store.getters.employeePermissions[ADD_EMPLOYEE];
       },
-      isNoEmployees: function () {
-        return !this.$store.getters.loadedEmployees.length;
+      totalEmployees: function () {
+        return this.$store.getters.totalEmployees;
       }
     }
   }
