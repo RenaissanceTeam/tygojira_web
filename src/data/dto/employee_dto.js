@@ -52,9 +52,20 @@ export class EmployeeFilter {
 }
 
 export class UpdateEmployeeInfoDto {
-  constructor(skills, workRoles) {
-    this.skills    = skills;
-    this.workRoles = workRoles;
+  constructor(firstName, middleName, lastName, subdivision, skills, position) {
+    this.firstName   = firstName;
+    this.middleName  = middleName;
+    this.lastName    = lastName;
+    this.subdivision = subdivision;
+    this.skills      = skills;
+    this.position    = position;
+  }
+}
+
+export class EmployeeWithUpdateEmployeeInfoDto {
+  constructor(employee, updateEmployeeInfoDto) {
+    this.employee = employee;
+    this.updateEmployeeInfoDto = updateEmployeeInfoDto;
   }
 }
 

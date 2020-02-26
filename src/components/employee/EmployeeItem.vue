@@ -14,7 +14,8 @@
     </template>
     <EmployeeInfo
         title="Карточка сотрудника"
-        v-on:employee-deleted="dialog = false"
+        v-if="dialog"
+        v-on:employee-changed="dialog = false"
     />
   </v-dialog>
 </template>

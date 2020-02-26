@@ -7,27 +7,25 @@
         <AddEmployeeForm class="px-2" v-if="isAddEmployeeAllowed"/>
       </v-card-title>
       <v-card-actions>
-        <v-row>
-          <v-col cols="12" sm="12">
-            <v-list>
-              <v-divider/>
-              <EmployeeItem
-                  v-for="employee in employees"
-                  v-bind:key="employee.id"
-                  :employee="employee"
-              />
-            </v-list>
-            <v-card-text>
-              Всего сотрудников: {{totalEmployees}}
-            </v-card-text>
-          </v-col>
+        <v-col cols="12" sm="12">
+          <v-list>
+            <v-divider/>
+            <EmployeeItem
+                v-for="employee in employees"
+                v-bind:key="hash(employee)"
+                :employee="employee"
+            />
+          </v-list>
+          <v-card-text>
+            Всего сотрудников: {{totalEmployees}}
+          </v-card-text>
 
           <v-pagination
               v-model="currentPage"
               :length="totalPages"
               @input="getNextEmployees"
           />
-        </v-row>
+        </v-col>
       </v-card-actions>
     </v-card>
   </v-container>
@@ -51,6 +49,9 @@
     methods: {
       getNextEmployees: function (page) {
         this.$store.dispatch(GET_EMPLOYEES, page);
+      },
+      hash: function (obj) {
+        return JSON.stringify(obj);
       }
     },
     mounted() {

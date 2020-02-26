@@ -16,6 +16,7 @@ import {debug, debugError} from "../../utils/logging";
 import {
   EmployeeDto,
   EmployeeWithRoleDto,
+  FullEmployeeInfoDto,
   EMPTY_EMPLOYEE_DTO,
   EMPTY_FULL_EMPLOYEE_INFO_DTO,
   FullEmployeeInfoDtoFields
@@ -136,8 +137,33 @@ const actions = {
         throw err;
       });
   },
+  async [UPDATE_EMPLOYEE]({commit}, employeeWithUpdateEmployeeInfoDto) {
+    const employee = employeeWithUpdateEmployeeInfoDto.employee;
+    const updateEmployeeInfoDto = employeeWithUpdateEmployeeInfoDto.updateEmployeeInfoDto;
+
+    employeeApi.updateEmployee(employee.id, updateEmployeeInfoDto)
+      .then(response => {
+        const employeeResponse = response.data;
+        debug(UPDATE_EMPLOYEE, "employeeResponse", employeeResponse);
+
+        const newEmployee = new FullEmployeeInfoDto(
+          employeeResponse.id,
+          employeeResponse.firstName,
+          employeeResponse.middleName,
+          employeeResponse.lastName,
+          employeeResponse.position,
+          employeeResponse.subdivision,
+          employeeResponse.skills
+        );
+        debug(UPDATE_EMPLOYEE, "Employee updated", newEmployee);
+        commit(UPDATE_EMPLOYEE, {employee: employee, newEmployee: newEmployee});
+      }).catch(err => {
+        debugError(UPDATE_EMPLOYEE, err.message, err.response.data.message);
+        throw err;
+      });
+  },
   async [DELETE_EMPLOYEE]({commit}, employee) {
-    await employeeApi.deleteEmployee(employee.id)
+    employeeApi.deleteEmployee(employee.id)
       .then(() => {
         debug(DELETE_EMPLOYEE, "Employee deleted", employee);
         commit(DELETE_EMPLOYEE, employee)
@@ -180,6 +206,9 @@ const mutations = {
   [ADD_EMPLOYEE](state, employee) {
     state.loadedEmployees = [employee, ...state.loadedEmployees];
     state.totalEmployees++;
+  },
+  [UPDATE_EMPLOYEE](state, {employee, newEmployee}) {
+    state.loadedEmployees.splice(state.loadedEmployees.indexOf(employee), 1, newEmployee);
   },
   [DELETE_EMPLOYEE](state, deletedEmployee) {
     state.loadedEmployees.splice(state.loadedEmployees.indexOf(deletedEmployee), 1);

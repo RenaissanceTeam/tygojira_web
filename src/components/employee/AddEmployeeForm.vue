@@ -107,8 +107,8 @@
     computed: {
       areRequiredFieldsSpecified() {
         const requiredFields = [this.firstName, this.lastName, this.username];
-        const notSpecified = requiredFields.find(field => !!field);
-        return !!notSpecified && !!this.roles.length;
+        const notSpecified = requiredFields.some(field => !field);
+        return !notSpecified && !!this.roles.length;
       }
     },
     methods: {

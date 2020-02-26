@@ -2,16 +2,21 @@
   <v-combobox
           v-model="valueInput"
           chips
-          clearable
+          append-icon=""
+          :hide-details="readonly"
+          :solo="readonly"
+          :flat="readonly"
+          :clearable="!readonly"
           :label="label"
           :hint="hint"
+          :readonly="readonly"
           multiple
   >
     <template v-slot:selection="{ attrs, item, select, selected }">
       <v-chip
               v-bind="attrs"
               :input-value="selected"
-              close
+              :close="!readonly"
               @click="select"
               @click:close="remove(item)"
       >
@@ -25,6 +30,10 @@
   export default {
     name: "ChipsCombobox",
     props: {
+      readonly: {
+        type: Boolean,
+        default: false
+      },
       value: {
         type: Array,
         default: function () {
