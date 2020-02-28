@@ -15,6 +15,7 @@
     <EmployeeInfo
         title="Карточка сотрудника"
         v-if="dialog"
+        :employee="employee"
         v-on:employee-changed="dialog = false"
     />
   </v-dialog>
@@ -22,7 +23,6 @@
 
 <script>
   import EmployeeInfo from "./EmployeeInfo";
-  import {SELECT_EMPLOYEE, UNSELECT_EMPLOYEE} from "../../data/constants/employee_constants";
   export default {
     name: "EmployeeItem",
     components: {EmployeeInfo},
@@ -38,15 +38,6 @@
         title: `${this.employee.lastName} ${this.employee.firstName} ${this.employee.middleName}`
       }
     },
-    watch: {
-      dialog: function (open) {
-        if (open) {
-          this.$store.dispatch(SELECT_EMPLOYEE, this.employee);
-        } else {
-          this.$store.dispatch(UNSELECT_EMPLOYEE);
-        }
-      }
-    }
   }
 </script>
 

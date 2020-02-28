@@ -1,10 +1,17 @@
 <template>
-
+  <div>
+    <ActivityToolbar/>
+    <ActivityCardList/>
+  </div>
 </template>
 
 <script>
+  import ActivityCardList from "./ActivityCardList";
+  import ActivityToolbar from "./ActivityToolbar";
+
   export default {
-    name: "Activity"
+    name: "Activity",
+    components: {ActivityToolbar, ActivityCardList}
   }
 </script>
 

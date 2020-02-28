@@ -1,3 +1,10 @@
+export const ActivityFields = {
+  id: "id",
+  name: "name",
+  startDate: "startDate",
+  endDate: "endDate"
+};
+
 export class Activity {
   constructor(id, name, startDate, endDate) {
     this.id = id;
@@ -12,5 +19,12 @@ export class ActivityDto {
     this.name = name;
     this.startDate = startDate;
     this.endDate = endDate;
+  }
+}
+
+export class ActivityWithActivityDto {
+  constructor(activity, activityDto) {
+    this.activity = activity;
+    this.activityDto = activityDto;
   }
 }

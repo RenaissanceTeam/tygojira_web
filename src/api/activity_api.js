@@ -9,9 +9,9 @@ export default {
   getActivity: id =>
     api.get(`${activityMapping}/${id}`),
   addActivity: activityDto =>
-    api.post(`${activityMapping}/add`, activityDto),
+    api.put(`${activityMapping}`, activityDto),
   updateActivity: (id, activityDto) =>
-    api.post(`${activityMapping}/${id}/update`, activityDto),
+    api.patch(`${activityMapping}/${id}`, activityDto),
   deleteActivity: id =>
     api.delete(`${activityMapping}/${id}`)
 }

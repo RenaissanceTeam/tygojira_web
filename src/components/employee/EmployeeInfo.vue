@@ -173,6 +173,10 @@
   export default {
     components: {ChipsCombobox},
     props: {
+      employee: {
+        type: Object,
+        required: true
+      },
       title: {
         type: String,
         default: ""
@@ -191,9 +195,6 @@
       }
     },
     computed: {
-      employee: function() {
-        return this.$store.getters.selectedEmployee;
-      },
       isDeleteEmployeeAllowed: function () {
         return this.$store.getters.employeePermissions[DELETE_EMPLOYEE] && !!this.employee.id;
       },
