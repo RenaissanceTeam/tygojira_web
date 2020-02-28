@@ -21,8 +21,8 @@
           </v-card-text>
 
           <v-pagination
-              v-model="currentPage"
-              :length="totalPages"
+              v-model="currentEmployeePage"
+              :length="totalEmployeePages"
               @input="getNextEmployees"
           />
         </v-col>
@@ -34,7 +34,7 @@
 <script>
   import {
     GET_EMPLOYEES,
-    SELECT_PAGE,
+    SELECT_EMPLOYEE_PAGE,
     ADD_EMPLOYEE
   } from "../../data/constants/employee_constants";
   import EmployeeItem from "./EmployeeItem";
@@ -55,19 +55,19 @@
       }
     },
     mounted() {
-      this.getNextEmployees(1)
+      this.getNextEmployees(1);
     },
     computed: {
-      currentPage: {
+      currentEmployeePage: {
         get: function () {
-          return this.$store.getters.currentPage;
+          return this.$store.getters.currentEmployeePage;
         },
         set: function (page) {
-          this.$store.dispatch(SELECT_PAGE, page);
+          this.$store.dispatch(SELECT_EMPLOYEE_PAGE, page);
         }
       },
-      totalPages: function() {
-        return this.$store.getters.totalPages;
+      totalEmployeePages: function() {
+        return this.$store.getters.totalEmployeePages;
       },
       employees: function () {
         return this.$store.getters.loadedEmployees;

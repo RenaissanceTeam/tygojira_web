@@ -5,9 +5,7 @@ import {
   DELETE_EMPLOYEE,
   GET_EMPLOYEES,
   BUSINESS_ROLE,
-  SELECT_EMPLOYEE,
-  UNSELECT_EMPLOYEE,
-  SELECT_PAGE,
+  SELECT_EMPLOYEE_PAGE,
   FILTER_EMPLOYEES,
   EMPLOYEES_PER_PAGE
 } from "../constants/employee_constants";
@@ -18,7 +16,6 @@ import {
   EmployeeWithRoleDto,
   FullEmployeeInfoDto,
   EMPTY_EMPLOYEE_DTO,
-  EMPTY_FULL_EMPLOYEE_INFO_DTO,
   FullEmployeeInfoDtoFields
 } from "../dto/employee_dto";
 import {Order} from "../dto/pagination_dto";
@@ -27,11 +24,10 @@ const state = {
   sessionEmployee: EMPTY_EMPLOYEE_DTO,
   sessionRoles: [],
 
-  currentPage: 0,
+  currentEmployeePage: 0,
   totalEmployees: 0,
-  totalPages: 0,
+  totalEmployeePages: 0,
   loadedEmployees: [],
-  selectedEmployee: EMPTY_FULL_EMPLOYEE_INFO_DTO,
 };
 
 const getters = {
@@ -42,20 +38,18 @@ const getters = {
   isLinearLead:    state => state.sessionRoles.includes(BUSINESS_ROLE.LINEAR_LEAD),
   isProjectOffice: state => state.sessionRoles.includes(BUSINESS_ROLE.PROJECT_OFFICE),
 
-  currentPage:        state => state.currentPage,
-  totalEmployees:     state => state.totalEmployees,
-  totalPages:         state => state.totalPages,
-  loadedEmployees:    state => state.loadedEmployees,
-  isEmployeeSelected: state => state.selectedEmployee === EMPTY_FULL_EMPLOYEE_INFO_DTO,
-  selectedEmployee:   state => state.selectedEmployee,
+  currentEmployeePage: state => state.currentEmployeePage,
+  totalEmployees:      state => state.totalEmployees,
+  totalEmployeePages:  state => state.totalEmployeePages,
+  loadedEmployees:     state => state.loadedEmployees,
 
   employeePermissions: (state, rootGetters) => {
     return {
       [CALLING_EMPLOYEE]: rootGetters.isAuthenticated,
-      [GET_EMPLOYEES]:   rootGetters.isAuthenticated,
-      [ADD_EMPLOYEE]:    rootGetters.isLinearLead || rootGetters.isAdmin,
-      [UPDATE_EMPLOYEE]: rootGetters.isLinearLead,
-      [DELETE_EMPLOYEE]: rootGetters.isLinearLead
+      [GET_EMPLOYEES]:    rootGetters.isAuthenticated,
+      [ADD_EMPLOYEE]:     rootGetters.isLinearLead || rootGetters.isAdmin,
+      [UPDATE_EMPLOYEE]:  rootGetters.isLinearLead,
+      [DELETE_EMPLOYEE]:  rootGetters.isLinearLead
     }
   }
 };
@@ -172,17 +166,9 @@ const actions = {
         throw err;
       });
   },
-  async [SELECT_EMPLOYEE]({commit}, selectedEmployee) {
-    debug(SELECT_EMPLOYEE, selectedEmployee);
-    commit(SELECT_EMPLOYEE, selectedEmployee)
-  },
-  async [UNSELECT_EMPLOYEE]({commit}) {
-    debug(UNSELECT_EMPLOYEE);
-    commit(UNSELECT_EMPLOYEE);
-  },
-  async [SELECT_PAGE]({commit}, page) {
-    debug(SELECT_PAGE, page);
-    commit(SELECT_PAGE, page);
+  async [SELECT_EMPLOYEE_PAGE]({commit}, page) {
+    debug(SELECT_EMPLOYEE_PAGE, page);
+    commit(SELECT_EMPLOYEE_PAGE, page);
   }
 };
 
@@ -190,14 +176,14 @@ const mutations = {
   [GET_EMPLOYEES](state, employeesPageResponse) {
     state.loadedEmployees = employeesPageResponse.items;
     state.totalEmployees = employeesPageResponse.totalItems;
-    state.currentPage = employeesPageResponse.currentPage + 1;
-    state.totalPages = employeesPageResponse.totalPages;
+    state.currentEmployeePage = employeesPageResponse.currentPage + 1;
+    state.totalEmployeePages = employeesPageResponse.totalPages;
   },
   [FILTER_EMPLOYEES](state, employeesPageResponse) {
     state.loadedEmployees = employeesPageResponse.items;
     state.totalEmployees = employeesPageResponse.totalItems;
-    state.currentPage = employeesPageResponse.currentPage + 1;
-    state.totalPages = employeesPageResponse.totalPages;
+    state.currentEmployeePage = employeesPageResponse.currentPage + 1;
+    state.totalEmployeePages = employeesPageResponse.totalPages;
   },
   [CALLING_EMPLOYEE](state, employeeRole) {
     state.sessionEmployee = employeeRole.employee;
@@ -214,14 +200,8 @@ const mutations = {
     state.loadedEmployees.splice(state.loadedEmployees.indexOf(deletedEmployee), 1);
     state.totalEmployees--;
   },
-  [SELECT_EMPLOYEE](state, selectedEmployee) {
-    state.selectedEmployee = selectedEmployee;
-  },
-  [UNSELECT_EMPLOYEE](state) {
-    state.selectedEmployee = EMPTY_FULL_EMPLOYEE_INFO_DTO;
-  },
-  [SELECT_PAGE](state, page) {
-    state.currentPage = page;
+  [SELECT_EMPLOYEE_PAGE](state, page) {
+    state.currentEmployeePage = page;
   }
 };
 
