@@ -128,13 +128,19 @@
         await this.$store.dispatch(ADD_EMPLOYEE, employee)
           .then(() => {
             this.dialog = false;
+            this.refreshForm();
           })
       },
       close: function () {
+        this.dialog = false;
+        this.refreshForm();
+      },
+      refreshForm: function () {
         this.firstName = "";
         this.middleName = "";
         this.lastName = "";
         this.username = "";
+        this.position = "";
         this.subdivision = "";
         this.skills = [];
         this.roles = [];
