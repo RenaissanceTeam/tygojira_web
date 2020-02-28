@@ -46,6 +46,7 @@ export class EmployeeFilter {
     this.middleName  = middleName;
     this.lastName    = lastName;
     this.position    = position;
+    this.subdivision = subdivision;
     this.skills      = skills;
     this.availableOn = availableOn;
   }
