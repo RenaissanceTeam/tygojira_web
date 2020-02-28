@@ -5,7 +5,7 @@
     </template>
     <v-card>
       <v-card-title>
-        <span class="headline">Введите информаци об активности</span>
+        <span class="headline">Введите информацию об активности</span>
       </v-card-title>
       <v-card-text>
         <v-container>
