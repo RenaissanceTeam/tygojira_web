@@ -21,3 +21,10 @@ export class ActivityDto {
     this.endDate = endDate;
   }
 }
+
+export class ActivityWithActivityDto {
+  constructor(activity, activityDto) {
+    this.activity = activity;
+    this.activityDto = activityDto;
+  }
+}

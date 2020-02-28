@@ -30,11 +30,9 @@
       <v-row v-else>
         <v-col cols="12" sm="10">
           <v-text-field
-            class="centerTextField"
             dense
             v-model="name"
             label="Наименование"
-            :readonly="!isEditActive"
           />
         </v-col>
       </v-row>
@@ -66,6 +64,8 @@
 <script>
   import ActivityInfo from "./ActivityInfo";
   import {DELETE_ACTIVITY, UPDATE_ACTIVITY} from "../../data/constants/activity_constants";
+  import {debugError} from "../../utils/logging";
+  import {ActivityDto, ActivityWithActivityDto} from "../../data/dto/activity_dto";
 
   export default {
     props: {
@@ -104,13 +104,28 @@
         this.isEditActive = true;
       },
       deleteActivity: function () {
-
+        this.$store.dispatch(DELETE_ACTIVITY, this.activity)
+          .then(() => {
+            this.$emit('activity-changed');
+          })
       },
       cancelEdit: function () {
         this.isEditActive = false;
+        this.name = this.activity.name;
       },
       save: function () {
-
+        this.$store.dispatch(UPDATE_ACTIVITY, new ActivityWithActivityDto(
+          this.activity,
+          new ActivityDto(
+            this.name,
+            this.activity.startDate,
+            this.activity.endDate
+          )
+        )).then(() => {
+          this.$emit('activity-changed');
+        }).catch(err => {
+          debugError("ActivityEditableInfo save", err.message);
+        });
       }
     }
   }
