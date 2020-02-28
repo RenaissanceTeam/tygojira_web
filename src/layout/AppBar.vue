@@ -32,7 +32,8 @@
     data: () => ({
       toolbarItems: [
         {title: 'О проекте', link: '/about'},
-        {title: 'Сотрудники', link: '/employee'},
+        {title: 'Сотрудники', link: '/employees'},
+        {title: 'Активности', link: '/activities'},
       ]
     })
   }

@@ -1,3 +1,10 @@
+export const ActivityFields = {
+  id: "id",
+  name: "name",
+  startDate: "startDate",
+  endDate: "endDate"
+};
+
 export class Activity {
   constructor(id, name, startDate, endDate) {
     this.id = id;
