@@ -36,8 +36,16 @@ const getters = {
 };
 
 const actions = {
-  async [ADD_ACTIVITY]() {
-
+  async [ADD_ACTIVITY]({commit}, activityDto) {
+    debug(ADD_ACTIVITY, "Adding activity:", activityDto);
+    activityApi.addActivity(activityDto)
+      .then(() => {
+        debug(ADD_ACTIVITY, "Activity added:", activityDto);
+        commit(ADD_ACTIVITY, activityDto);
+      }).catch(err => {
+      debugError(ADD_ACTIVITY, err.message, err.response.data.message);
+      throw err;
+    })
   },
   async [GET_ACTIVITIES]({commit}, page) {
     activityApi.getActivities(
@@ -69,6 +77,10 @@ const mutations = {
     state.totalActivities = activitiesPageResponse.totalItems;
     state.currentActivityPage = activitiesPageResponse.currentPage + 1;
     state.totalActivityPages = activitiesPageResponse.totalPages;
+  },
+  [ADD_ACTIVITY](state, activity) {
+    state.loadedActivities = [activity, ...state.loadedActivities];
+    state.totalActivities++;
   }
 };
 

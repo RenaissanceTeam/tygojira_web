@@ -18,8 +18,10 @@
               />
             </v-col>
             <v-col cols="12" sm="12">
-              {{dateRangeText}}
-              <RangeDatePicker v-model="dateRange"/>
+              <RangeDatePicker
+                label="Даты активности*"
+                v-model="dateRange"
+              />
             </v-col>
           </v-row>
         </v-container>
@@ -60,9 +62,9 @@
     },
     computed: {
       areRequiredFieldsSpecified() {
-        const requiredFields = [this.name, this.startDate, this.endDate];
+        const requiredFields = [this.name, this.dateRange.startDate, this.dateRange.endDate];
         const notSpecified = requiredFields.some(field => !field);
-        return !notSpecified && !!this.roles.length;
+        return !notSpecified;
       },
       dateRangeText() {
         return this.dateRange.startDate + " ~ " + this.dateRange.endDate;
@@ -72,8 +74,8 @@
       save: async function () {
         const activity = new ActivityDto(
           this.name,
-          this.startDate,
-          this.endDate
+          this.dateRange.startDate,
+          this.dateRange.endDate
         );
         await this.$store.dispatch(ADD_ACTIVITY, activity)
           .then(() => {

@@ -88,10 +88,10 @@
     },
     computed: {
       isEditActivityAllowed: function () {
-        return this.$store.getters.activityPermissions[UPDATE_ACTIVITY];
+        return this.$store.getters.activityPermissions[UPDATE_ACTIVITY] && !!this.activity.id;
       },
       isDeleteActivityAllowed: function () {
-        return this.$store.getters.activityPermissions[DELETE_ACTIVITY];
+        return this.$store.getters.activityPermissions[DELETE_ACTIVITY] && !!this.activity.id;
       },
       areRequiredFieldsSpecified() {
         const requiredFields = [this.name];

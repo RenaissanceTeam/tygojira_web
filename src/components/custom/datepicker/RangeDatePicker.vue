@@ -10,7 +10,8 @@
   >
     <template v-slot:activator="{ on }">
       <v-text-field
-        label="Picker in menu"
+        v-model="dateRangeText"
+        :label="label"
         readonly
         v-on="on"
       />
@@ -40,6 +41,10 @@
             endDate: ""
           }
         }
+      },
+      label: {
+        type: String,
+        default: ""
       }
     },
     data: function () {
