@@ -9,14 +9,14 @@
         color="warning"
         v-on:click="edit"
         v-if="isEditEmployeeAllowed && !isEditActive"
-        >
+      >
         Редактировать
       </v-btn>
       <v-btn
-          small
-          color="error"
-          v-on:click="deleteEmployee"
-          v-if="isDeleteEmployeeAllowed"
+        small
+        color="error"
+        v-on:click="deleteEmployee"
+        v-if="isDeleteEmployeeAllowed"
       >
         Удалить
       </v-btn>
@@ -35,43 +35,43 @@
           <v-row v-if="isEditActive" dense class="mb-n4">
             <v-col cols="12" sm="10">
               <v-text-field
-                  class="denseTextField"
-                  dense
-                  v-model="lastName"
-                  label="Фамилия"
-                  :rules="required('Фамилия')"
-                  solo
-                  flat
-                  :readonly="!isEditActive"
+                class="denseTextField"
+                dense
+                v-model="lastName"
+                label="Фамилия"
+                :rules="required('Фамилия')"
+                solo
+                flat
+                :readonly="!isEditActive"
               />
             </v-col>
             <v-col cols="12" sm="10">
               <v-text-field
-                  class="denseTextField"
-                  dense
-                  v-model="firstName"
-                  label="Имя"
-                  :rules="required('Имя')"
-                  solo
-                  flat
-                  :readonly="!isEditActive"
+                class="denseTextField"
+                dense
+                v-model="firstName"
+                label="Имя"
+                :rules="required('Имя')"
+                solo
+                flat
+                :readonly="!isEditActive"
               />
             </v-col>
             <v-col cols="12" sm="10">
               <v-text-field
-                  class="lastDenseTextField"
-                  dense
-                  v-model="middleName"
-                  label="Отчество"
-                  solo
-                  flat
-                  :readonly="!isEditActive"
+                class="lastDenseTextField"
+                dense
+                v-model="middleName"
+                label="Отчество"
+                solo
+                flat
+                :readonly="!isEditActive"
               />
             </v-col>
           </v-row>
 
           <v-col v-else class="subtitle-1">
-            {{employee.lastName}} {{employee.firstName}} {{employee.middleName}}
+            {{lastName}} {{firstName}} {{middleName}}
           </v-col>
         </v-list-item>
 
@@ -86,14 +86,16 @@
 
           <v-row>
             <v-col cols="12" sm="10">
-              <v-text-field
-                  class="centerTextField"
-                  dense
-                  v-model="position"
-                  label="Позиция"
-                  solo
-                  flat
-                  :readonly="!isEditActive"
+              <v-autocomplete
+                class="centerTextField"
+                :items="employeePositions"
+                dense
+                :append-icon="autocompleteIcon"
+                v-model="position"
+                label="Позиция"
+                solo
+                flat
+                :readonly="!isEditActive"
               />
             </v-col>
           </v-row>
@@ -110,14 +112,16 @@
 
           <v-row>
             <v-col cols="12" sm="10">
-              <v-text-field
-                  class="centerTextField"
-                  dense
-                  v-model="subdivision"
-                  label="Подразделение"
-                  solo
-                  flat
-                  :readonly="!isEditActive"
+              <v-autocomplete
+                class="centerTextField"
+                dense
+                :append-icon="autocompleteIcon"
+                v-model="subdivision"
+                label="Подразделение"
+                :items="employeeSubdivisions"
+                solo
+                flat
+                :readonly="!isEditActive"
               />
             </v-col>
           </v-row>
@@ -134,7 +138,11 @@
 
           <v-row>
             <v-col cols="12" sm="10">
-              <ChipsCombobox v-model="skills" :readonly="!isEditActive"/>
+              <ChipsAutocomplete
+                v-model="skills"
+                :items="employeeSkills"
+                :readonly="!isEditActive"
+              />
             </v-col>
           </v-row>
         </v-list-item>
@@ -143,20 +151,20 @@
     <v-card-actions>
       <v-spacer/>
       <v-btn
-          small
-          color="warning"
-          v-on:click="cancelEdit"
-          v-if="isEditActive"
+        small
+        color="warning"
+        v-on:click="cancelEdit"
+        v-if="isEditActive"
       >
         Отменить
       </v-btn>
       <v-btn
-          class="mx-2"
-          small
-          color="success"
-          v-on:click="save"
-          :disabled="!areRequiredFieldsSpecified"
-          v-if="isEditActive"
+        class="mx-2"
+        small
+        color="success"
+        v-on:click="save"
+        :disabled="!areRequiredFieldsSpecified"
+        v-if="isEditActive"
       >
         Сохранить
       </v-btn>
@@ -166,14 +174,15 @@
 
 <script>
   import {DELETE_EMPLOYEE, UPDATE_EMPLOYEE} from "../../data/constants/employee_constants";
-  import ChipsCombobox from "../custom/combobox/ChipsCombobox";
-  import {EmployeeWithUpdateEmployeeInfoDto, UpdateEmployeeInfoDto} from "../../data/dto/employee_dto";
-  import {debugError} from "../../utils/logging";
+  import {FullEmployeeInfoDto, UpdateEmployeeInfoDto} from "../../data/dto/employee_dto";
+  import {debug, debugError} from "../../utils/logging";
+  import employeeApi from "../../api/employee_api";
+  import ChipsAutocomplete from "../custom/autocomplete/ChipsAutocomplete";
 
   export default {
-    components: {ChipsCombobox},
+    components: {ChipsAutocomplete},
     props: {
-      employee: {
+      value: {
         type: Object,
         required: true
       },
@@ -185,26 +194,39 @@
     name: "EmployeeInfo",
     data() {
       return {
-        lastName: "",
-        firstName: "",
-        middleName: "",
-        position: "",
-        subdivision: "",
-        skills: [],
+        oldEmployee: this.value,
+        lastName: this.value.lastName,
+        firstName: this.value.firstName,
+        middleName: this.value.middleName,
+        position: this.value.position,
+        subdivision: this.value.subdivision,
+        skills: this.value.skills,
         isEditActive: false
       }
     },
     computed: {
       isDeleteEmployeeAllowed: function () {
-        return this.$store.getters.employeePermissions[DELETE_EMPLOYEE] && !!this.employee.id;
+        return this.$store.getters.employeePermissions[DELETE_EMPLOYEE];
       },
       isEditEmployeeAllowed: function () {
-        return this.$store.getters.employeePermissions[UPDATE_EMPLOYEE] && !!this.employee.id;
+        return this.$store.getters.employeePermissions[UPDATE_EMPLOYEE];
       },
       areRequiredFieldsSpecified() {
-        const requiredFields = [this.firstName, this.lastName];
+        const requiredFields = [this.firstName, this.lastName, this.subdivision, this.position];
         const notSpecified = requiredFields.some(field => !field);
         return !notSpecified;
+      },
+      employeeSkills() {
+        return this.$store.getters.employeeSkills;
+      },
+      employeePositions() {
+        return this.$store.getters.employeePositions;
+      },
+      employeeSubdivisions() {
+        return this.$store.getters.employeeSubdivisions;
+      },
+      autocompleteIcon() {
+        return this.isEditActive ? "$dropdown" : "";
       }
     },
     methods: {
@@ -216,42 +238,58 @@
         this.refreshEmployee();
       },
       save: function () {
-        this.$store.dispatch(UPDATE_EMPLOYEE, new EmployeeWithUpdateEmployeeInfoDto(
-          this.employee,
-          new UpdateEmployeeInfoDto(
-            this.firstName,
-            this.middleName,
-            this.lastName,
-            this.subdivision,
-            this.skills,
-            this.position
-          )
-        )).then(() => {
-          this.$emit('employee-changed');
-        }).catch(err => {
-          debugError("EmployeeInfo save", err.message)
+        const updateEmployeeInfoDto = new UpdateEmployeeInfoDto(
+          this.firstName,
+          this.middleName,
+          this.lastName,
+          this.subdivision,
+          this.skills,
+          this.position
+        );
+        employeeApi.updateEmployee(this.value.id, updateEmployeeInfoDto)
+          .then(response => {
+            const employeeResponse = response.data;
+            debug(UPDATE_EMPLOYEE, "employeeResponse", employeeResponse);
+
+            const newEmployee = new FullEmployeeInfoDto(
+              employeeResponse.id,
+              employeeResponse.firstName,
+              employeeResponse.middleName,
+              employeeResponse.lastName,
+              employeeResponse.position,
+              employeeResponse.subdivision,
+              employeeResponse.skills
+            );
+            this.oldEmployee = newEmployee;
+            this.isEditActive = false;
+            this.$emit("input", newEmployee);
+          }).catch(err => {
+          debugError(UPDATE_EMPLOYEE, err.message, err.response.data.message);
+          throw err;
         });
       },
       deleteEmployee: function () {
-        this.$store.dispatch(DELETE_EMPLOYEE, this.employee)
+        employeeApi.deleteEmployee(this.value.id)
           .then(() => {
-            this.$emit('employee-changed');
+            debug(DELETE_EMPLOYEE, "Employee deleted", this.value);
+            this.$emit('employee-deleted');
           })
+          .catch(err => {
+            debugError(DELETE_EMPLOYEE, err.message, err.response.data.message);
+            throw err;
+          });
       },
       refreshEmployee: function () {
-        this.lastName = this.employee.lastName;
-        this.firstName = this.employee.firstName;
-        this.middleName = this.employee.middleName;
-        this.position = this.employee.position;
-        this.subdivision = this.employee.subdivision;
-        this.skills = [...this.employee.skills];
+        this.lastName = this.oldEmployee.lastName;
+        this.firstName = this.oldEmployee.firstName;
+        this.middleName = this.oldEmployee.middleName;
+        this.position = this.oldEmployee.position;
+        this.subdivision = this.oldEmployee.subdivision;
+        this.skills = [...this.oldEmployee.skills];
       },
       required: function (name) {
         return [value => !!value || `${name} required`];
       }
-    },
-    beforeMount() {
-      this.refreshEmployee();
     }
   }
 </script>

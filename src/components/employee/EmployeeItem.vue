@@ -5,7 +5,7 @@
         <v-list-item link v-on="on">
           <v-list-item-content>
             <v-list-item-title
-                v-text="title"
+              v-text="title"
             />
           </v-list-item-content>
         </v-list-item>
@@ -13,16 +13,17 @@
       </div>
     </template>
     <EmployeeInfo
-        title="Карточка сотрудника"
-        v-if="dialog"
-        :employee="employee"
-        v-on:employee-changed="dialog = false"
+      title="Карточка сотрудника"
+      v-if="dialog"
+      v-model="editableEmployee"
+      v-on:employee-deleted="onEmployeeDeleted"
     />
   </v-dialog>
 </template>
 
 <script>
   import EmployeeInfo from "./EmployeeInfo";
+
   export default {
     name: "EmployeeItem",
     components: {EmployeeInfo},
@@ -34,10 +35,21 @@
     },
     data: function () {
       return {
-        dialog: false,
-        title: `${this.employee.lastName} ${this.employee.firstName} ${this.employee.middleName}`
+        editableEmployee: this.employee,
+        dialog: false
       }
     },
+    computed: {
+      title: function () {
+        return `${this.editableEmployee.lastName} ${this.editableEmployee.firstName} ${this.editableEmployee.middleName}`;
+      }
+    },
+    methods: {
+      onEmployeeDeleted: function () {
+        this.dialog = false;
+        this.$emit("employee-deleted");
+      }
+    }
   }
 </script>
 

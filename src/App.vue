@@ -15,6 +15,11 @@
   import {debug, debugError} from "./utils/logging";
   import AppSideNavigation from "./layout/AppSideNavigation";
   import AppContent from "./layout/AppContent";
+  import {
+    GET_EMPLOYEE_POSITIONS,
+    GET_EMPLOYEE_SKILLS,
+    GET_EMPLOYEE_SUBDIVISIONS
+  } from "./data/constants/employee_constants";
 
   export default {
     name: 'app',
@@ -35,6 +40,11 @@
         debugError("App beforeCreate:", e.message);
         this.$router.push("/login");
       });
+    },
+    mounted() {
+      this.$store.dispatch(GET_EMPLOYEE_SKILLS);
+      this.$store.dispatch(GET_EMPLOYEE_SUBDIVISIONS);
+      this.$store.dispatch(GET_EMPLOYEE_POSITIONS);
     }
   }
 </script>
