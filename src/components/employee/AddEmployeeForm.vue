@@ -12,56 +12,61 @@
           <v-row>
             <v-col cols="12" sm="6" md="4">
               <v-text-field
-                  label="Фамилия*"
-                  v-model="lastName"
-                  :rules="required('Фамилия')"
+                label="Фамилия*"
+                v-model="lastName"
+                :rules="required('Фамилия')"
               />
             </v-col>
             <v-col cols="12" sm="6" md="4">
               <v-text-field
-                  label="Имя*"
-                  v-model="firstName"
-                  :rules="required('Имя')"
+                label="Имя*"
+                v-model="firstName"
+                :rules="required('Имя')"
               />
             </v-col>
             <v-col cols="12" sm="6" md="4">
               <v-text-field
-                  label="Отчество"
-                  v-model="middleName"
-              />
-            </v-col>
-            <v-col cols="12" sm="6">
-              <v-text-field
-                  label="Должность"
-                  v-model="position"
-              />
-            </v-col>
-            <v-col cols="12" sm="6">
-              <v-text-field
-                  label="Подразделение"
-                  v-model="subdivision"
-              />
-            </v-col>
-            <v-col cols="12" sm="12">
-              <ChipsCombobox
-                  label="Навыки"
-                  v-model="skills"
-              />
-            </v-col>
-            <v-col cols="12" sm="6">
-              <v-text-field
-                  label="Логин*"
-                  v-model="username"
-                  :rules="required('Логин')"
+                label="Отчество"
+                v-model="middleName"
               />
             </v-col>
             <v-col cols="12" sm="6">
               <v-autocomplete
-                  :items="allRoles"
-                  label="Роли*"
-                  v-model="roles"
-                  multiple
-                  :rules="requiredNonEmptyArray('Роли')"
+                label="Должность*"
+                :items="employeePositions"
+                v-model="position"
+                :rules="required('Должность')"
+              />
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-autocomplete
+                label="Подразделение*"
+                :items="employeeSubdivisions"
+                v-model="subdivision"
+                :rules="required('Подразделение')"
+              />
+            </v-col>
+            <v-col cols="12" sm="12">
+              <ChipsAutocomplete
+                :items="employeeSkills"
+                label="Навыки"
+                v-model="skills"
+              />
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-text-field
+                label="Логин*"
+                v-model="username"
+                :rules="required('Логин')"
+              />
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-autocomplete
+                :items="allRoles"
+                label="Роли*"
+                v-model="roles"
+                multiple
+                :rules="requiredNonEmptyArray('Роли')"
               />
             </v-col>
           </v-row>
@@ -71,10 +76,10 @@
         <v-spacer/>
         <v-btn color="primary" text @click="close">Close</v-btn>
         <v-btn
-            color="primary"
-            text
-            @click="save"
-            :disabled="!areRequiredFieldsSpecified"
+          color="primary"
+          text
+          @click="save"
+          :disabled="!areRequiredFieldsSpecified"
         >
           Save
         </v-btn>
@@ -86,11 +91,13 @@
 <script>
   import {ADD_EMPLOYEE, BUSINESS_ROLE} from "../../data/constants/employee_constants";
   import {EmployeeDto, EmployeeWithRoleDto} from "../../data/dto/employee_dto";
-  import ChipsCombobox from "../custom/combobox/ChipsCombobox";
+  import employeeApi from "../../api/employee_api";
+  import {debug, debugError} from "../../utils/logging";
+  import ChipsAutocomplete from "../custom/autocomplete/ChipsAutocomplete";
 
   export default {
     name: "AddEmployeeForm",
-    components: {ChipsCombobox},
+    components: {ChipsAutocomplete},
     data: () => ({
       dialog: false,
       allRoles: Object.keys(BUSINESS_ROLE),
@@ -106,14 +113,23 @@
     }),
     computed: {
       areRequiredFieldsSpecified() {
-        const requiredFields = [this.firstName, this.lastName, this.username];
+        const requiredFields = [this.firstName, this.lastName, this.username, this.subdivision, this.position];
         const notSpecified = requiredFields.some(field => !field);
         return !notSpecified && !!this.roles.length;
+      },
+      employeeSkills() {
+        return this.$store.getters.employeeSkills;
+      },
+      employeePositions() {
+        return this.$store.getters.employeePositions;
+      },
+      employeeSubdivisions() {
+        return this.$store.getters.employeeSubdivisions;
       }
     },
     methods: {
       save: async function () {
-        const employee = new EmployeeWithRoleDto(
+        const employeeWithRoleDto = new EmployeeWithRoleDto(
           new EmployeeDto(
             this.username,
             this.firstName,
@@ -125,17 +141,22 @@
           ),
           this.roles
         );
-        await this.$store.dispatch(ADD_EMPLOYEE, employee)
-          .then(() => {
-            this.dialog = false;
+        await employeeApi.addEmployee(employeeWithRoleDto)
+          .then(response => {
+            const employee = response.data;
+            debug(ADD_EMPLOYEE, "Employee added", employee);
             this.refreshForm();
-          })
+            this.$emit('employee-added');
+          }).catch(err => {
+            debugError(ADD_EMPLOYEE, err.message, err.response.data.message);
+            throw err;
+          });
       },
       close: function () {
-        this.dialog = false;
         this.refreshForm();
       },
       refreshForm: function () {
+        this.dialog = false;
         this.firstName = "";
         this.middleName = "";
         this.lastName = "";
@@ -144,7 +165,6 @@
         this.subdivision = "";
         this.skills = [];
         this.roles = [];
-        this.dialog = false;
       },
       required: function (name) {
         return [value => !!value || `${name} required`];

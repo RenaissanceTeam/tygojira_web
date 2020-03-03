@@ -5,43 +5,38 @@ import {
   DELETE_EMPLOYEE,
   GET_EMPLOYEES,
   BUSINESS_ROLE,
-  SELECT_EMPLOYEE_PAGE,
-  FILTER_EMPLOYEES,
-  EMPLOYEES_PER_PAGE
+  GET_EMPLOYEE_POSITIONS,
+  GET_EMPLOYEE_SUBDIVISIONS,
+  GET_EMPLOYEE_SKILLS
 } from "../constants/employee_constants";
 import employeeApi from "../../api/employee_api";
 import {debug, debugError} from "../../utils/logging";
 import {
   EmployeeDto,
   EmployeeWithRoleDto,
-  FullEmployeeInfoDto,
-  EMPTY_EMPLOYEE_DTO,
-  FullEmployeeInfoDtoFields
+  EMPTY_EMPLOYEE_DTO
 } from "../dto/employee_dto";
-import {Order} from "../dto/pagination_dto";
 
 const state = {
   sessionEmployee: EMPTY_EMPLOYEE_DTO,
   sessionRoles: [],
 
-  currentEmployeePage: 0,
-  totalEmployees: 0,
-  totalEmployeePages: 0,
-  loadedEmployees: [],
+  employeeSubdivisions: [],
+  employeePositions: [],
+  employeeSkills: [],
 };
 
 const getters = {
   sessionEmployee: state => state.sessionEmployee,
 
+  employeeSubdivisions: state => state.employeeSubdivisions,
+  employeePositions: state => state.employeePositions,
+  employeeSkills: state => state.employeeSkills,
+
   isEmployee:      state => state.sessionRoles.includes(BUSINESS_ROLE.EMPLOYEE),
   isProjectLead:   state => state.sessionRoles.includes(BUSINESS_ROLE.PROJECT_LEAD),
   isLinearLead:    state => state.sessionRoles.includes(BUSINESS_ROLE.LINEAR_LEAD),
   isProjectOffice: state => state.sessionRoles.includes(BUSINESS_ROLE.PROJECT_OFFICE),
-
-  currentEmployeePage: state => state.currentEmployeePage,
-  totalEmployees:      state => state.totalEmployees,
-  totalEmployeePages:  state => state.totalEmployeePages,
-  loadedEmployees:     state => state.loadedEmployees,
 
   employeePermissions: (state, rootGetters) => {
     return {
@@ -82,126 +77,54 @@ const actions = {
         ));
       });
   },
-  async [GET_EMPLOYEES]({commit}, page) {
-    employeeApi.getEmployees(
-      page - 1,
-      EMPLOYEES_PER_PAGE,
-      Order.ASCENDING,
-      [
-        FullEmployeeInfoDtoFields.lastName,
-        FullEmployeeInfoDtoFields.firstName,
-        FullEmployeeInfoDtoFields.middleName
-      ]
-    ).then(response => {
-      const employeesPageResponse = response.data;
-      debug(GET_EMPLOYEES, "employeesPageResponse:", employeesPageResponse);
-      commit(GET_EMPLOYEES, employeesPageResponse);
-    }).catch(err => {
-      debugError(GET_EMPLOYEES, err.message, err.response.data.message);
-      throw err;
-    })
-  },
-  async [FILTER_EMPLOYEES]({commit}, employeeFilter) {
-    employeeApi.filterEmployees(
-      0,
-      EMPLOYEES_PER_PAGE,
-      Order.ASCENDING,
-      [
-        FullEmployeeInfoDtoFields.lastName,
-        FullEmployeeInfoDtoFields.firstName,
-        FullEmployeeInfoDtoFields.middleName
-      ],
-      employeeFilter
-    ).then(response => {
-      const employeesPageResponse = response.data;
-      debug(FILTER_EMPLOYEES, "employeesPageResponse", employeesPageResponse);
-      commit(FILTER_EMPLOYEES, employeesPageResponse);
-    }).catch(err => {
-      debugError(FILTER_EMPLOYEES, err.message, err.response.data.message);
-      throw err;
-    })
-  },
-  async [ADD_EMPLOYEE]({commit}, employeeWithRole) {
-    await employeeApi.addEmployee(employeeWithRole)
-      .then(() => {
-        debug(ADD_EMPLOYEE, "Employee added", employeeWithRole);
-        commit(ADD_EMPLOYEE, employeeWithRole.employee);
-      }).catch(err => {
-        debugError(ADD_EMPLOYEE, err.message, err.response.data.message);
-        throw err;
-      });
-  },
-  async [UPDATE_EMPLOYEE]({commit}, employeeWithUpdateEmployeeInfoDto) {
-    const employee = employeeWithUpdateEmployeeInfoDto.employee;
-    const updateEmployeeInfoDto = employeeWithUpdateEmployeeInfoDto.updateEmployeeInfoDto;
-
-    employeeApi.updateEmployee(employee.id, updateEmployeeInfoDto)
+  async [GET_EMPLOYEE_POSITIONS]({commit}) {
+    await employeeApi.getEmployeePositions()
       .then(response => {
-        const employeeResponse = response.data;
-        debug(UPDATE_EMPLOYEE, "employeeResponse", employeeResponse);
-
-        const newEmployee = new FullEmployeeInfoDto(
-          employeeResponse.id,
-          employeeResponse.firstName,
-          employeeResponse.middleName,
-          employeeResponse.lastName,
-          employeeResponse.position,
-          employeeResponse.subdivision,
-          employeeResponse.skills
-        );
-        debug(UPDATE_EMPLOYEE, "Employee updated", newEmployee);
-        commit(UPDATE_EMPLOYEE, {employee: employee, newEmployee: newEmployee});
+        const positionsDtoResponse = response.data;
+        debug(GET_EMPLOYEE_POSITIONS, "positionsDtoResponse:", positionsDtoResponse);
+        commit(GET_EMPLOYEE_POSITIONS, positionsDtoResponse);
       }).catch(err => {
-        debugError(UPDATE_EMPLOYEE, err.message, err.response.data.message);
+        debugError(GET_EMPLOYEE_POSITIONS, err.message, err.response.data.message);
         throw err;
-      });
+      })
   },
-  async [DELETE_EMPLOYEE]({commit}, employee) {
-    employeeApi.deleteEmployee(employee.id)
-      .then(() => {
-        debug(DELETE_EMPLOYEE, "Employee deleted", employee);
-        commit(DELETE_EMPLOYEE, employee)
+  async [GET_EMPLOYEE_SUBDIVISIONS]({commit}) {
+    await employeeApi.getEmployeeSubdivisions()
+      .then(response => {
+        const subdivisionsDtoResponse = response.data;
+        debug(GET_EMPLOYEE_SUBDIVISIONS, "subdivisionsDtoResponse:", subdivisionsDtoResponse);
+        commit(GET_EMPLOYEE_SUBDIVISIONS, subdivisionsDtoResponse);
       }).catch(err => {
-        debugError(DELETE_EMPLOYEE, err.message, err.response.data.message);
+        debugError(GET_EMPLOYEE_SUBDIVISIONS, err.message, err.response.data.message);
         throw err;
-      });
+      })
   },
-  async [SELECT_EMPLOYEE_PAGE]({commit}, page) {
-    debug(SELECT_EMPLOYEE_PAGE, page);
-    commit(SELECT_EMPLOYEE_PAGE, page);
-  }
+  async [GET_EMPLOYEE_SKILLS]({commit}) {
+    await employeeApi.getEmployeeSkills()
+      .then(response => {
+        const skillsDtoResponse = response.data;
+        debug(GET_EMPLOYEE_SKILLS, "skillsDtoResponse:", skillsDtoResponse);
+        commit(GET_EMPLOYEE_SKILLS, skillsDtoResponse);
+      }).catch(err => {
+        debugError(GET_EMPLOYEE_SKILLS, err.message, err.response.data.message);
+        throw err;
+      })
+  },
 };
 
 const mutations = {
-  [GET_EMPLOYEES](state, employeesPageResponse) {
-    state.loadedEmployees = employeesPageResponse.items;
-    state.totalEmployees = employeesPageResponse.totalItems;
-    state.currentEmployeePage = employeesPageResponse.currentPage + 1;
-    state.totalEmployeePages = employeesPageResponse.totalPages;
-  },
-  [FILTER_EMPLOYEES](state, employeesPageResponse) {
-    state.loadedEmployees = employeesPageResponse.items;
-    state.totalEmployees = employeesPageResponse.totalItems;
-    state.currentEmployeePage = employeesPageResponse.currentPage + 1;
-    state.totalEmployeePages = employeesPageResponse.totalPages;
-  },
   [CALLING_EMPLOYEE](state, employeeRole) {
     state.sessionEmployee = employeeRole.employee;
     state.sessionRoles = employeeRole.roles;
   },
-  [ADD_EMPLOYEE](state, employee) {
-    state.loadedEmployees = [employee, ...state.loadedEmployees];
-    state.totalEmployees++;
+  [GET_EMPLOYEE_SUBDIVISIONS](state, subdivisionsDtoResponse) {
+    state.employeeSubdivisions = subdivisionsDtoResponse.subdivisions;
   },
-  [UPDATE_EMPLOYEE](state, {employee, newEmployee}) {
-    state.loadedEmployees.splice(state.loadedEmployees.indexOf(employee), 1, newEmployee);
+  [GET_EMPLOYEE_POSITIONS](state, positionsDtoResponse) {
+    state.employeePositions = positionsDtoResponse.positions;
   },
-  [DELETE_EMPLOYEE](state, deletedEmployee) {
-    state.loadedEmployees.splice(state.loadedEmployees.indexOf(deletedEmployee), 1);
-    state.totalEmployees--;
-  },
-  [SELECT_EMPLOYEE_PAGE](state, page) {
-    state.currentEmployeePage = page;
+  [GET_EMPLOYEE_SKILLS](state, skillsDtoResponse) {
+    state.employeeSkills = skillsDtoResponse.skills;
   }
 };
 

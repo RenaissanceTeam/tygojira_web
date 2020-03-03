@@ -63,12 +63,4 @@ export class UpdateEmployeeInfoDto {
   }
 }
 
-export class EmployeeWithUpdateEmployeeInfoDto {
-  constructor(employee, updateEmployeeInfoDto) {
-    this.employee = employee;
-    this.updateEmployeeInfoDto = updateEmployeeInfoDto;
-  }
-}
-
 export const EMPTY_EMPLOYEE_DTO = new EmployeeDto("", "", "", "", "", "", []);
-export const EMPTY_FULL_EMPLOYEE_INFO_DTO = new FullEmployeeInfoDto("", "", "", "", "", "", []);
