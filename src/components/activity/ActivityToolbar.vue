@@ -1,15 +1,14 @@
 <template>
-  <v-toolbar dense>
+  <v-toolbar dense elevation="2">
     <v-toolbar-title>
       Активности компании
     </v-toolbar-title>
     <v-spacer/>
-    <v-toolbar-items>
-      <AddActivityButton
-        class="px-2"
-        v-if="isAddActivityAllowed"
-      />
-    </v-toolbar-items>
+    <AddActivityButton
+      class="px-2"
+      v-if="isAddActivityAllowed"
+      v-on:activity-added="$emit('activity-added')"
+    />
   </v-toolbar>
 </template>
 

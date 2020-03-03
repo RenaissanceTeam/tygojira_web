@@ -24,7 +24,7 @@
     <v-card-text>
       <ActivityInfo
         v-if="!isEditActive"
-        :activity="activity"
+        :activity="value"
       />
 
       <v-row v-else>
@@ -64,8 +64,9 @@
 <script>
   import ActivityInfo from "./ActivityInfo";
   import {DELETE_ACTIVITY, UPDATE_ACTIVITY} from "../../data/constants/activity_constants";
-  import {debugError} from "../../utils/logging";
-  import {ActivityDto, ActivityWithActivityDto} from "../../data/dto/activity_dto";
+  import {debug, debugError} from "../../utils/logging";
+  import {Activity, ActivityDto} from "../../data/dto/activity_dto";
+  import activityApi from "../../api/activity_api";
 
   export default {
     props: {
@@ -73,7 +74,7 @@
         type: String,
         default: "Карточка активности"
       },
-      activity: {
+      value: {
         type: Object,
         required: true
       }
@@ -82,16 +83,17 @@
     components: {ActivityInfo},
     data: function () {
       return {
-        name: this.activity.name,
+        oldActivity: this.value,
+        name: this.value.name,
         isEditActive: false
       }
     },
     computed: {
       isEditActivityAllowed: function () {
-        return this.$store.getters.activityPermissions[UPDATE_ACTIVITY] && !!this.activity.id;
+        return this.$store.getters.activityPermissions[UPDATE_ACTIVITY];
       },
       isDeleteActivityAllowed: function () {
-        return this.$store.getters.activityPermissions[DELETE_ACTIVITY] && !!this.activity.id;
+        return this.$store.getters.activityPermissions[DELETE_ACTIVITY];
       },
       areRequiredFieldsSpecified() {
         const requiredFields = [this.name];
@@ -104,28 +106,46 @@
         this.isEditActive = true;
       },
       deleteActivity: function () {
-        this.$store.dispatch(DELETE_ACTIVITY, this.activity)
+        activityApi.deleteActivity(this.value.id)
           .then(() => {
-            this.$emit('activity-changed');
+            debug(DELETE_ACTIVITY, "Activity deleted", this.value);
+            this.$emit('activity-deleted');
           })
+          .catch(err => {
+            debugError(DELETE_ACTIVITY, err.message, err.response.data.message);
+            throw err;
+          });
       },
       cancelEdit: function () {
         this.isEditActive = false;
-        this.name = this.activity.name;
+        this.name = this.oldActivity.name;
       },
       save: function () {
-        this.$store.dispatch(UPDATE_ACTIVITY, new ActivityWithActivityDto(
-          this.activity,
-          new ActivityDto(
-            this.name,
-            this.activity.startDate,
-            this.activity.endDate
-          )
-        )).then(() => {
-          this.$emit('activity-changed');
-        }).catch(err => {
-          debugError("ActivityEditableInfo save", err.message);
-        });
+        const activityDto = new ActivityDto(
+          this.name,
+          this.value.startDate,
+          this.value.endDate
+        );
+        activityApi.updateActivity(this.value.id, activityDto)
+          .then(response => {
+            const activityResponse = response.data;
+            debug(UPDATE_ACTIVITY, "activityResponse:", activityResponse);
+
+            const newActivity = new Activity(
+              activityResponse.id,
+              activityResponse.name,
+              activityResponse.startDate,
+              activityResponse.endDate
+            );
+            debug(UPDATE_ACTIVITY, "Activity updated:", newActivity);
+            this.oldActivity = newActivity;
+            this.isEditActive = false;
+            this.$emit("input", newActivity);
+          })
+          .catch(err => {
+            debugError(UPDATE_ACTIVITY, err.message, err.response.data.message);
+            throw err;
+          });
       }
     }
   }

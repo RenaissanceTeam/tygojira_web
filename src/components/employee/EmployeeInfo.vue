@@ -263,10 +263,11 @@
             this.oldEmployee = newEmployee;
             this.isEditActive = false;
             this.$emit("input", newEmployee);
-          }).catch(err => {
-          debugError(UPDATE_EMPLOYEE, err.message, err.response.data.message);
-          throw err;
-        });
+          })
+          .catch(err => {
+            debugError(UPDATE_EMPLOYEE, err.message, err.response.data.message);
+            throw err;
+          });
       },
       deleteEmployee: function () {
         employeeApi.deleteEmployee(this.value.id)

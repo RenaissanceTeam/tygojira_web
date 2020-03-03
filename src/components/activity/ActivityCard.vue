@@ -3,7 +3,7 @@
     <template v-slot:activator="{ on }">
       <v-card link v-on="on">
         <v-card-title class="justify-center">
-          {{activity.name}}
+          {{editableActivity.name}}
         </v-card-title>
         <v-card-text class="text-center subtitle-1">
           {{activityDateRangeText}}
@@ -12,8 +12,8 @@
     </template>
     <ActivityEditableInfo
       v-if="dialog"
-      :activity="activity"
-      v-on:activity-changed="dialog = false"
+      v-model="editableActivity"
+      v-on:activity-deleted="onEmployeeDeleted"
     />
   </v-dialog>
 </template>
@@ -23,21 +23,28 @@
 
   export default {
     components: {ActivityEditableInfo},
-    data: function () {
-      return {
-        dialog: false
-      }
-    },
     props: {
       activity: {
         type: Object,
         required: true
       }
     },
+    data: function () {
+      return {
+        editableActivity: this.activity,
+        dialog: false
+      }
+    },
     name: "ActivityCard",
     computed: {
       activityDateRangeText: function () {
-        return this.activity.startDate + " - " + this.activity.endDate;
+        return this.editableActivity.startDate + " - " + this.editableActivity.endDate;
+      }
+    },
+    methods: {
+      onEmployeeDeleted() {
+        this.dialog = false;
+        this.$emit("activity-deleted");
       }
     }
   }
