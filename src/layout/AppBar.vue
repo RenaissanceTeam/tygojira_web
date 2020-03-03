@@ -34,6 +34,7 @@
         {title: 'О проекте', link: '/about'},
         {title: 'Сотрудники', link: '/employees'},
         {title: 'Активности', link: '/activities'},
+        {title: 'Производственный календарь', link: '/holidays'},
       ]
     })
   }
