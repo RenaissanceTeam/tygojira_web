@@ -285,11 +285,18 @@
         this.middleName = this.oldEmployee.middleName;
         this.position = this.oldEmployee.position;
         this.subdivision = this.oldEmployee.subdivision;
-        this.skills = [...this.oldEmployee.skills];
+        this.skills = [...this.getAvailableSkills(this.oldEmployee.skills)];
       },
       required: function (name) {
         return [value => !!value || `${name} required`];
+      },
+      // ui doesnt show nonexistent skills so they cannot be removed manually
+      getAvailableSkills(skills) {
+        return skills.filter(skill => this.employeeSkills.includes(skill));
       }
+    },
+    beforeMount() {
+      this.skills = this.getAvailableSkills(this.skills);
     }
   }
 </script>

@@ -42,6 +42,7 @@
       });
     },
     mounted() {
+      // todo: move these loadings to components which require them
       this.$store.dispatch(GET_EMPLOYEE_SKILLS);
       this.$store.dispatch(GET_EMPLOYEE_SUBDIVISIONS);
       this.$store.dispatch(GET_EMPLOYEE_POSITIONS);
