@@ -19,6 +19,7 @@
             </v-col>
             <v-col cols="12" sm="12">
               <RangeDatePicker
+                ref="datePicker"
                 label="Даты активности*"
                 v-model="dateRange"
               />
@@ -46,6 +47,8 @@
   import {ActivityDto} from "../../data/dto/activity_dto";
   import {ADD_ACTIVITY} from "../../data/constants/activity_constants";
   import RangeDatePicker from "../custom/datepicker/RangeDatePicker";
+  import {debug, debugError} from "../../utils/logging";
+  import activityApi from "../../api/activity_api";
 
   export default {
     name: "AddActivityButton",
@@ -72,22 +75,38 @@
     },
     methods: {
       save: async function () {
-        const activity = new ActivityDto(
+        const activityDto = new ActivityDto(
           this.name,
           this.dateRange.startDate,
           this.dateRange.endDate
         );
-        await this.$store.dispatch(ADD_ACTIVITY, activity)
-          .then(() => {
-            this.dialog = false;
+        debug(ADD_ACTIVITY, "Adding activity:", activityDto);
+        activityApi.addActivity(activityDto)
+          .then(response => {
+            const activityResponse = response.data;
+            debug(ADD_ACTIVITY, "Activity added:", activityResponse);
+            this.refreshForm();
+            this.$emit("activity-added");
+          })
+          .catch(err => {
+            debugError(ADD_ACTIVITY, err.message, err.response.data.message);
+            throw err;
           })
       },
       close: function () {
-        this.name = "";
-        this.dialog = false;
+        this.refreshForm();
       },
       required: function (name) {
         return [value => !!value || `${name} required`];
+      },
+      refreshForm() {
+        this.dialog = false;
+        this.name = "";
+        this.dateRange = {
+          startDate: "",
+          endDate: ""
+        };
+        this.$refs.datePicker.clear();
       }
     }
   }

@@ -23,7 +23,7 @@
       scrollable
     >
       <v-spacer/>
-      <v-btn text color="primary" @click="cancel">Cancel</v-btn>
+      <v-btn text color="primary" @click="clear">Cancel</v-btn>
       <v-btn text color="primary" @click="save">OK</v-btn>
     </v-date-picker>
   </v-menu>
@@ -72,7 +72,7 @@
           this.menu = false;
         }
       },
-      cancel() {
+      clear() {
         this.refreshMenu();
       },
       refreshMenu() {
