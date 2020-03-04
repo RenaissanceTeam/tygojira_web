@@ -1,24 +1,24 @@
 <template>
   <v-app-bar
-          app
-          clipped-left
-          color="primary">
+    app
+    clipped-left
+    color="primary">
     <v-toolbar-title id="title">
       <router-link
-              to="/"
-              tag="span"
-              style="cursor: pointer"
+        to="/"
+        tag="span"
+        style="cursor: pointer"
       >
         <img src="../assets/logo.png" alt="FORCE"/>
       </router-link>
     </v-toolbar-title>
     <v-toolbar-items>
       <v-btn
-              text
-              color="secondary"
-              v-for="item in toolbarItems"
-              :key="item.title"
-              :to="item.link">
+        text
+        color="secondary"
+        v-for="item in toolbarItems"
+        :key="item.title"
+        :to="item.link">
         {{ item.title }}
       </v-btn>
     </v-toolbar-items>
@@ -34,7 +34,7 @@
         {title: 'О проекте', link: '/about'},
         {title: 'Сотрудники', link: '/employees'},
         {title: 'Активности', link: '/activities'},
-        {title: 'Производственный календарь', link: '/holidays'},
+        {title: 'Праздники', link: '/holidays'},
       ]
     })
   }
