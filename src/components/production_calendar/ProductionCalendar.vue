@@ -16,7 +16,7 @@
       <AddHolidayButton
         class="px-2"
         v-if="isAddHolidayAllowed"
-        @change="refresh"
+        @change="addHoliday"
       />
     </v-toolbar>
     <v-row dense>
@@ -30,6 +30,8 @@
         sm="6"
       >
         <MonthHolidaysCalendar
+          v-on:deleted="deleteHoliday"
+          @change="updateHoliday"
           :year="year"
           :month="i"
           :events="events"
@@ -79,6 +81,15 @@
             debugError(GET_HOLIDAYS, err.message, err.response.data.message);
             throw err;
           })
+      },
+      addHoliday(event) {
+        this.events = [event, ...this.events];
+      },
+      deleteHoliday(event) {
+        this.events.splice(this.events.indexOf(event), 1);
+      },
+      updateHoliday(event) {
+        this.events.splice(this.events.indexOf(event.oldEvent), 1, event.newEvent);
       },
       refresh() {
         this.loadHolidays(this.year);

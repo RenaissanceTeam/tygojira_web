@@ -14,34 +14,31 @@
         <span class="headline">Введите информацию о празднике</span>
       </v-card-title>
       <v-card-text>
-        <v-container>
-          <v-row dense>
-            <v-col cols="12" sm="12">
-              <v-text-field
-                label="Название*"
-                v-model="title"
-                :rules="required('Название')"
-              />
-            </v-col>
-            <v-col cols="12" sm="6">
-              <RangeDatePicker
-                :allowSingleDay="true"
-                ref="datePicker"
-                label="Даты праздника*"
-                v-model="dateRange"
-              />
-            </v-col>
-            <v-col cols="12" sm="12">
-              <v-textarea
-                :rows="1"
-                auto-grow
-                label="Описание*"
-                v-model="description"
-                :rules="required('Описание')"
-              />
-            </v-col>
-          </v-row>
-        </v-container>
+        <v-row dense>
+          <v-col cols="12" sm="12">
+            <v-text-field
+              label="Название*"
+              v-model="title"
+              :rules="required('Название')"
+            />
+          </v-col>
+          <v-col cols="12" sm="12">
+            <RangeDatePicker
+              :allowSingleDay="true"
+              ref="datePicker"
+              label="Даты праздника*"
+              v-model="dateRange"
+            />
+          </v-col>
+          <v-col cols="12" sm="12">
+            <v-textarea
+              :rows="1"
+              auto-grow
+              label="Описание"
+              v-model="description"
+            />
+          </v-col>
+        </v-row>
       </v-card-text>
       <v-card-actions>
         <v-spacer/>
@@ -85,7 +82,7 @@
     computed: {
       areRequiredFieldsSpecified() {
         return areAllRequiredFieldsSpecified([
-          this.title, this.description, this.dateRange.startDate, this.dateRange.endDate
+          this.title, this.dateRange.startDate, this.dateRange.endDate
         ]);
       }
     },

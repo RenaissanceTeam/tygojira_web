@@ -20,17 +20,34 @@
         :weekdays="weekdays"
         :show-month-on-first="false"
         type="month"
+        @click:event="showEvent"
         @change="updateRange"
       />
+      <v-menu
+        v-model="selectedOpen"
+        :close-on-content-click="false"
+        :activator="selectedElement"
+        offset-x
+      >
+        <HolidayInfo
+          ref="holiday"
+          v-on:deleted="onEventDeleted"
+          @change="onEventChanged"
+          :event="selectedEvent"
+          :color="eventColor(selectedEvent)"
+        />
+      </v-menu>
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
   import {BASE_COLOURS} from "../../data/constants/util_constants";
+  import HolidayInfo from "./HolidayInfo";
 
   export default {
     name: "MonthHolidaysCalendar",
+    components: {HolidayInfo},
     props: {
       eventName: {
         type: String,
@@ -73,7 +90,11 @@
       return {
         oldYear: this.year,
         focus: "",
-        monthText: ""
+        monthText: "",
+
+        selectedEvent: {},
+        selectedElement: null,
+        selectedOpen: false
       }
     },
     computed: {
@@ -101,6 +122,28 @@
       },
       endYear(year) {
         return `${year}-12-31`;
+      },
+      showEvent({nativeEvent, event}) {
+        const open = () => {
+          this.selectedEvent = event;
+          this.selectedElement = nativeEvent.target;
+          setTimeout(() => this.selectedOpen = true, 10);
+        };
+        if (this.selectedOpen) {
+          this.selectedOpen = false;
+          setTimeout(open, 10);
+        } else {
+          open();
+        }
+        nativeEvent.stopPropagation()
+      },
+      onEventDeleted(event) {
+        this.selectedOpen = false;
+        this.selectedElement = null;
+        this.$emit("deleted", event);
+      },
+      onEventChanged(event) {
+        this.$emit("change", event);
       }
     },
     watch: {
@@ -108,6 +151,9 @@
         const yearsDifference = this.year - this.oldYear;
         this.$refs.calendar.move(yearsDifference * 12);
         this.oldYear = this.year;
+      },
+      selectedOpen: function (value) {
+        if (!value) this.$refs.holiday.refresh();
       }
     },
     mounted() {

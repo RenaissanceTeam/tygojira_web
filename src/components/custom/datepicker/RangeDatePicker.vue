@@ -17,6 +17,8 @@
       />
     </template>
     <v-date-picker
+      locale="ru"
+      :first-day-of-week="1"
       v-model="dateRange"
       range
       no-title
@@ -54,7 +56,7 @@
     data: function () {
       return {
         menu: false,
-        dateRange: []
+        dateRange: [this.value.startDate, this.value.endDate]
       }
     },
     computed: {
