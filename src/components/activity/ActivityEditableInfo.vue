@@ -67,6 +67,7 @@
   import {debug, debugError} from "../../utils/logging";
   import {Activity, ActivityDto} from "../../data/dto/activity_dto";
   import activityApi from "../../api/activity_api";
+  import {areAllRequiredFieldsSpecified} from "../../utils/validation";
 
   export default {
     props: {
@@ -96,9 +97,7 @@
         return this.$store.getters.activityPermissions[DELETE_ACTIVITY];
       },
       areRequiredFieldsSpecified() {
-        const requiredFields = [this.name];
-        const notSpecified = requiredFields.some(field => !field);
-        return !notSpecified;
+        return areAllRequiredFieldsSpecified([this.name]);
       }
     },
     methods: {

@@ -178,6 +178,7 @@
   import {debug, debugError} from "../../utils/logging";
   import employeeApi from "../../api/employee_api";
   import ChipsAutocomplete from "../custom/autocomplete/ChipsAutocomplete";
+  import {areAllRequiredFieldsSpecified, requiredField} from "../../utils/validation";
 
   export default {
     components: {ChipsAutocomplete},
@@ -212,9 +213,7 @@
         return this.$store.getters.employeePermissions[UPDATE_EMPLOYEE];
       },
       areRequiredFieldsSpecified() {
-        const requiredFields = [this.firstName, this.lastName, this.subdivision, this.position];
-        const notSpecified = requiredFields.some(field => !field);
-        return !notSpecified;
+        return areAllRequiredFieldsSpecified([this.firstName, this.lastName, this.subdivision, this.position]);
       },
       employeeSkills() {
         return this.$store.getters.employeeSkills;
@@ -289,7 +288,7 @@
         this.skills = [...this.getAvailableSkills(this.oldEmployee.skills)];
       },
       required: function (name) {
-        return [value => !!value || `${name} required`];
+        return requiredField(name);
       },
       // ui doesnt show nonexistent skills so they cannot be removed manually
       getAvailableSkills(skills) {

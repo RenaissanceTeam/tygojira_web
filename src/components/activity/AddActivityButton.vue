@@ -8,24 +8,22 @@
         <span class="headline">Введите информацию об активности</span>
       </v-card-title>
       <v-card-text>
-        <v-container>
-          <v-row>
-            <v-col cols="12" sm="12">
-              <v-text-field
-                label="Наименование*"
-                v-model="name"
-                :rules="required('Наименование')"
-              />
-            </v-col>
-            <v-col cols="12" sm="12">
-              <RangeDatePicker
-                ref="datePicker"
-                label="Даты активности*"
-                v-model="dateRange"
-              />
-            </v-col>
-          </v-row>
-        </v-container>
+        <v-row dense>
+          <v-col cols="12" sm="12">
+            <v-text-field
+              label="Наименование*"
+              v-model="name"
+              :rules="required('Наименование')"
+            />
+          </v-col>
+          <v-col cols="12" sm="12">
+            <RangeDatePicker
+              ref="datePicker"
+              label="Даты активности*"
+              v-model="dateRange"
+            />
+          </v-col>
+        </v-row>
       </v-card-text>
       <v-card-actions>
         <v-spacer/>
@@ -49,6 +47,7 @@
   import RangeDatePicker from "../custom/datepicker/RangeDatePicker";
   import {debug, debugError} from "../../utils/logging";
   import activityApi from "../../api/activity_api";
+  import {areAllRequiredFieldsSpecified, requiredField} from "../../utils/validation";
 
   export default {
     name: "AddActivityButton",
@@ -65,12 +64,9 @@
     },
     computed: {
       areRequiredFieldsSpecified() {
-        const requiredFields = [this.name, this.dateRange.startDate, this.dateRange.endDate];
-        const notSpecified = requiredFields.some(field => !field);
-        return !notSpecified;
-      },
-      dateRangeText() {
-        return this.dateRange.startDate + " ~ " + this.dateRange.endDate;
+        return areAllRequiredFieldsSpecified([
+          this.name, this.dateRange.startDate, this.dateRange.endDate
+        ]);
       }
     },
     methods: {
@@ -97,7 +93,7 @@
         this.refreshForm();
       },
       required: function (name) {
-        return [value => !!value || `${name} required`];
+        return requiredField(name);
       },
       refreshForm() {
         this.dialog = false;

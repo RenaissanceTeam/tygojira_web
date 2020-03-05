@@ -42,6 +42,10 @@
           }
         }
       },
+      allowSingleDay: {
+        type: Boolean,
+        default: false
+      },
       label: {
         type: String,
         default: ""
@@ -60,15 +64,26 @@
     },
     methods: {
       save() {
-        if (this.dateRange.length < 2) {
+        if (this.dateRange.length === 0 || (!this.allowSingleDay && this.dateRange.length === 1)) {
           this.refreshMenu();
-        } else {
-          this.dateRange.sort();
-          this.$refs.menu.save(this.dateRangeText);
           this.$emit('input', {
-            startDate: this.dateRange[0],
-            endDate: this.dateRange[1]
+            startDate: "",
+            endDate: ""
           });
+        } else {
+          if (this.dateRange.length === 1) {
+            this.$emit('input', {
+              startDate: this.dateRange[0],
+              endDate: this.dateRange[0]
+            });
+          } else {
+            this.dateRange.sort();
+            this.$emit('input', {
+              startDate: this.dateRange[0],
+              endDate: this.dateRange[1]
+            });
+          }
+          this.$refs.menu.save(this.dateRangeText);
           this.menu = false;
         }
       },

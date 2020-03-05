@@ -11,7 +11,10 @@
         :start="start"
         :end="end"
         :events="events"
-        :event-color="getEventColor"
+        :event-name="eventName"
+        :event-start="eventStart"
+        :event-end="eventEnd"
+        :event-color="eventColor"
         locale="ru"
         :event-height="20"
         :weekdays="weekdays"
@@ -24,9 +27,29 @@
 </template>
 
 <script>
+  import {BASE_COLOURS} from "../../data/constants/util_constants";
+
   export default {
     name: "MonthHolidaysCalendar",
     props: {
+      eventName: {
+        type: String,
+        default: "title"
+      },
+      eventStart: {
+        type: String,
+        default: "startDate"
+      },
+      eventEnd: {
+        type: String,
+        default: "endDate"
+      },
+      colors: {
+        type: Array,
+        default: function () {
+          return BASE_COLOURS;
+        }
+      },
       weekdays: {
         type: Array,
         default: function () {
@@ -70,8 +93,8 @@
       updateRange({start}) {
         this.monthText = this.monthFormatter(start);
       },
-      getEventColor(event) {
-        return event.color;
+      eventColor(event) {
+        return this.colors[(event.id * 31) % this.colors.length];
       },
       startYear(year) {
         return `${year}-01-01`;

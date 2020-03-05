@@ -16,11 +16,12 @@
       <AddHolidayButton
         class="px-2"
         v-if="isAddHolidayAllowed"
+        @change="refresh"
       />
     </v-toolbar>
     <v-row dense>
       <v-col
-        v-for="i in [0,1,2,3,4,5,6,7,8,9,10,11]"
+        v-for="i in Array(12).keys()"
         :key="i"
         cols="12"
         xl="2"
@@ -41,7 +42,9 @@
 <script>
   import MonthHolidaysCalendar from "./MonthHolidaysCalendar";
   import AddHolidayButton from "./AddHolidayButton";
-  import {ADD_HOLIDAY} from "../../data/constants/production_calendar_constants";
+  import {ADD_HOLIDAY, GET_HOLIDAYS} from "../../data/constants/production_calendar_constants";
+  import productionCalendarApi from "../../api/production_calendar_api";
+  import {debug, debugError} from "../../utils/logging";
 
   export default {
     name: "ProductionCalendar",
@@ -50,50 +53,7 @@
       return {
         year: this.currentYear(),
         supportedYears: this.doubleRange(this.currentYear(), 3),
-        events: [
-          {
-            name: "kekwwww",
-            start: "2020-03-04",
-            end: "2020-03-04",
-            color: "blue"
-          },
-          {
-            name: "asdasdasdasd",
-            start: "2020-03-04",
-            end: "2020-03-07",
-            color: "red"
-          },
-          {
-            name: "some event",
-            start: "2020-03-12",
-            end: "2020-03-17",
-            color: "orange"
-          },
-          {
-            name: "some event",
-            start: "2020-04-19",
-            end: "2020-04-25",
-            color: "yellow"
-          },
-          {
-            name: "some event",
-            start: "2020-04-28",
-            end: "2020-05-06",
-            color: "purple"
-          },
-          {
-            name: "some event 2021",
-            start: "2021-04-28",
-            end: "2021-05-06",
-            color: "purple"
-          },
-          {
-            name: "some event 2019",
-            start: "2019-08-28",
-            end: "2019-09-06",
-            color: "purple"
-          }
-        ]
+        events: []
       }
     },
     computed: {
@@ -107,7 +67,30 @@
       },
       doubleRange(value, range) {
         return Array(range * 2 + 1).fill(value).map((v, i) => v + i - range);
+      },
+      async loadHolidays(year) {
+        productionCalendarApi.getHolidays(year)
+          .then(response => {
+            const holidaysResponse = response.data;
+            debug(GET_HOLIDAYS, "holidaysResponse:", holidaysResponse);
+            this.events = holidaysResponse.holidays;
+          })
+          .catch(err => {
+            debugError(GET_HOLIDAYS, err.message, err.response.data.message);
+            throw err;
+          })
+      },
+      refresh() {
+        this.loadHolidays(this.year);
       }
+    },
+    watch: {
+      year: function (year) {
+        this.loadHolidays(year)
+      }
+    },
+    mounted() {
+      this.refresh();
     }
   }
 </script>

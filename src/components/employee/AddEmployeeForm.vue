@@ -9,7 +9,7 @@
       </v-card-title>
       <v-card-text>
         <v-container>
-          <v-row>
+          <v-row dense>
             <v-col cols="12" sm="6" md="4">
               <v-text-field
                 label="Фамилия*"
@@ -94,6 +94,7 @@
   import employeeApi from "../../api/employee_api";
   import {debug, debugError} from "../../utils/logging";
   import ChipsAutocomplete from "../custom/autocomplete/ChipsAutocomplete";
+  import {areAllRequiredFieldsSpecified, requiredField, requiredNonEmptyArray} from "../../utils/validation";
 
   export default {
     name: "AddEmployeeForm",
@@ -113,9 +114,9 @@
     }),
     computed: {
       areRequiredFieldsSpecified() {
-        const requiredFields = [this.firstName, this.lastName, this.username, this.subdivision, this.position];
-        const notSpecified = requiredFields.some(field => !field);
-        return !notSpecified && !!this.roles.length;
+        return areAllRequiredFieldsSpecified([
+          this.firstName, this.lastName, this.username, this.subdivision, this.position
+        ]);
       },
       employeeSkills() {
         return this.$store.getters.employeeSkills;
@@ -167,10 +168,10 @@
         this.roles = [];
       },
       required: function (name) {
-        return [value => !!value || `${name} required`];
+        return requiredField(name);
       },
       requiredNonEmptyArray: function (name) {
-        return [v => !!v.length || `${name} required`];
+        return requiredNonEmptyArray(name);
       }
     }
   }
