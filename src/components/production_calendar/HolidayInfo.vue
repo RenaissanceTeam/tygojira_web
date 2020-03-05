@@ -20,6 +20,7 @@
       </v-btn>
       <v-btn
         icon
+        v-if="isEditActive"
         @click="onDeleteClicked"
       >
         <v-icon>mdi-close</v-icon>
