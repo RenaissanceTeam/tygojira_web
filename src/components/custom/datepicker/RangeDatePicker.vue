@@ -25,7 +25,7 @@
       scrollable
     >
       <v-spacer/>
-      <v-btn text color="primary" @click="clear">Cancel</v-btn>
+      <v-btn text color="primary" @click="clear">Отменить</v-btn>
       <v-btn text color="primary" @click="save">OK</v-btn>
     </v-date-picker>
   </v-menu>

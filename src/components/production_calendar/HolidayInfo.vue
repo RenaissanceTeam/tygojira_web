@@ -61,7 +61,7 @@
         :color="color"
         @click="refresh"
       >
-        Cancel
+        Отменить
       </v-btn>
       <v-spacer/>
       <v-btn
@@ -69,7 +69,7 @@
         color="success"
         @click="onSaveClicked"
       >
-        Save
+        Сохранить
       </v-btn>
     </v-card-actions>
   </v-card>

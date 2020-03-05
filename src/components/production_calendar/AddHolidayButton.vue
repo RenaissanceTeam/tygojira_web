@@ -42,14 +42,14 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer/>
-        <v-btn color="primary" text @click="close">Close</v-btn>
+        <v-btn color="primary" text @click="close">Закрыть</v-btn>
         <v-btn
           color="primary"
           text
           @click="save"
           :disabled="!areRequiredFieldsSpecified"
         >
-          Save
+          Сохранить
         </v-btn>
       </v-card-actions>
     </v-card>
