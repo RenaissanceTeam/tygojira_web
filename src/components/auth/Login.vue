@@ -71,6 +71,7 @@
 <script>
   import {AUTH_REQUEST} from "../../data/constants/auth_constants";
   import {Credentials} from "../../data/dto/auth_dto";
+  import {requiredField} from "../../utils/validation";
 
   export default {
     data: () => ({
@@ -89,7 +90,7 @@
         });
       },
       required: function (name) {
-        return [value => !!value || `${name} required`];
+        return requiredField(name);
       }
     }
   }

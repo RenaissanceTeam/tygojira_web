@@ -53,6 +53,12 @@ export default new Router({
       name: 'activities',
       component: () => import('./components/activity/Activity.vue'),
       beforeEnter: ifAuthenticated
+    },
+    {
+      path: '/holidays',
+      name: 'holidays',
+      component: () => import('./components/production_calendar/ProductionCalendar.vue'),
+      beforeEnter: ifAuthenticated
     }
   ]
 })

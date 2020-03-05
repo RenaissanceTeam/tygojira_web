@@ -1,0 +1,4 @@
+export const ADD_HOLIDAY = "ADD_HOLIDAY";
+export const UPDATE_HOLIDAY = "UPDATE_HOLIDAY";
+export const DELETE_HOLIDAY = "DELETE_HOLIDAY";
+export const GET_HOLIDAYS = "GET_HOLIDAYS";

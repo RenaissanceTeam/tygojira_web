@@ -1,13 +1,7 @@
 <template>
   <div>
+    <ActivityToolbar v-on:activity-added="refreshCurrentPage"/>
     <v-row>
-      <v-col
-        cols="12"
-        sm="12"
-      >
-        <ActivityToolbar v-on:activity-added="refreshCurrentPage"/>
-      </v-col>
-
       <v-col
         cols="12"
         sm="3"
@@ -60,15 +54,13 @@
         }
       }
     },
-    data: function() {
+    data: function () {
       return {
         currentActivityPage: 0,
         totalActivities: 0,
         totalActivityPages: 0,
         loadedActivities: []
       }
-    },
-    computed: {
     },
     methods: {
       getNextActivities: function (page) {

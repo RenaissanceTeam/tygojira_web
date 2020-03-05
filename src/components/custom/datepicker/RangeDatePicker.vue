@@ -17,13 +17,15 @@
       />
     </template>
     <v-date-picker
+      locale="ru"
+      :first-day-of-week="1"
       v-model="dateRange"
       range
       no-title
       scrollable
     >
       <v-spacer/>
-      <v-btn text color="primary" @click="clear">Cancel</v-btn>
+      <v-btn text color="primary" @click="clear">Отменить</v-btn>
       <v-btn text color="primary" @click="save">OK</v-btn>
     </v-date-picker>
   </v-menu>
@@ -42,6 +44,10 @@
           }
         }
       },
+      allowSingleDay: {
+        type: Boolean,
+        default: false
+      },
       label: {
         type: String,
         default: ""
@@ -50,7 +56,7 @@
     data: function () {
       return {
         menu: false,
-        dateRange: []
+        dateRange: [this.value.startDate, this.value.endDate]
       }
     },
     computed: {
@@ -60,15 +66,26 @@
     },
     methods: {
       save() {
-        if (this.dateRange.length < 2) {
+        if (this.dateRange.length === 0 || (!this.allowSingleDay && this.dateRange.length === 1)) {
           this.refreshMenu();
-        } else {
-          this.dateRange.sort();
-          this.$refs.menu.save(this.dateRangeText);
           this.$emit('input', {
-            startDate: this.dateRange[0],
-            endDate: this.dateRange[1]
+            startDate: "",
+            endDate: ""
           });
+        } else {
+          if (this.dateRange.length === 1) {
+            this.$emit('input', {
+              startDate: this.dateRange[0],
+              endDate: this.dateRange[0]
+            });
+          } else {
+            this.dateRange.sort();
+            this.$emit('input', {
+              startDate: this.dateRange[0],
+              endDate: this.dateRange[1]
+            });
+          }
+          this.$refs.menu.save(this.dateRangeText);
           this.menu = false;
         }
       },

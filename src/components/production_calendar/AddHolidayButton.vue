@@ -1,26 +1,41 @@
 <template>
   <v-dialog v-model="dialog" persistent max-width="600px">
     <template v-slot:activator="{ on }">
-      <v-btn small color="primary" v-on="on">Добавить</v-btn>
+      <v-btn
+        small
+        color="primary"
+        v-on="on"
+      >
+        Добавить праздник
+      </v-btn>
     </template>
     <v-card>
       <v-card-title>
-        <span class="headline">Введите информацию об активности</span>
+        <span class="headline">Введите информацию о празднике</span>
       </v-card-title>
       <v-card-text>
         <v-row dense>
           <v-col cols="12" sm="12">
             <v-text-field
-              label="Наименование*"
-              v-model="name"
-              :rules="required('Наименование')"
+              label="Название*"
+              v-model="title"
+              :rules="required('Название')"
             />
           </v-col>
           <v-col cols="12" sm="12">
             <RangeDatePicker
+              :allowSingleDay="true"
               ref="datePicker"
-              label="Даты активности*"
+              label="Даты праздника*"
               v-model="dateRange"
+            />
+          </v-col>
+          <v-col cols="12" sm="12">
+            <v-textarea
+              :rows="1"
+              auto-grow
+              label="Описание"
+              v-model="description"
             />
           </v-col>
         </v-row>
@@ -42,20 +57,22 @@
 </template>
 
 <script>
-  import {ActivityDto} from "../../data/dto/activity_dto";
-  import {ADD_ACTIVITY} from "../../data/constants/activity_constants";
   import RangeDatePicker from "../custom/datepicker/RangeDatePicker";
-  import {debug, debugError} from "../../utils/logging";
-  import activityApi from "../../api/activity_api";
   import {areAllRequiredFieldsSpecified, requiredField} from "../../utils/validation";
+  import {debug, debugError} from "../../utils/logging";
+  import {ADD_HOLIDAY} from "../../data/constants/production_calendar_constants";
+  import productionCalendarApi from "../../api/production_calendar_api";
+  import {HolidayDto} from "../../data/dto/production_calendar_dto";
 
   export default {
-    name: "AddActivityButton",
+    name: "AddHolidayButton",
     components: {RangeDatePicker},
     data: function () {
       return {
         dialog: false,
-        name: "",
+
+        title: "",
+        description: "",
         dateRange: {
           startDate: "",
           endDate: ""
@@ -65,39 +82,41 @@
     computed: {
       areRequiredFieldsSpecified() {
         return areAllRequiredFieldsSpecified([
-          this.name, this.dateRange.startDate, this.dateRange.endDate
+          this.title, this.dateRange.startDate, this.dateRange.endDate
         ]);
       }
     },
     methods: {
       save: async function () {
-        const activityDto = new ActivityDto(
-          this.name,
+        const holidayDto = new HolidayDto(
+          this.title,
+          this.description,
           this.dateRange.startDate,
           this.dateRange.endDate
         );
-        debug(ADD_ACTIVITY, "Adding activity:", activityDto);
-        activityApi.addActivity(activityDto)
+        debug(ADD_HOLIDAY, "Adding holiday:", holidayDto);
+        productionCalendarApi.addHoliday(holidayDto)
           .then(response => {
-            const activityResponse = response.data;
-            debug(ADD_ACTIVITY, "Activity added:", activityResponse);
+            const holidayResponse = response.data;
+            debug(ADD_HOLIDAY, "Holiday added:", holidayResponse);
             this.refreshForm();
-            this.$emit("activity-added");
+            this.$emit("change", holidayResponse);
           })
           .catch(err => {
-            debugError(ADD_ACTIVITY, err.message, err.response.data.message);
+            debugError(ADD_HOLIDAY, err.message, err.response.data.message);
             throw err;
           })
       },
       close: function () {
         this.refreshForm();
       },
-      required: function (name) {
+      required(name) {
         return requiredField(name);
       },
       refreshForm() {
         this.dialog = false;
-        this.name = "";
+        this.title = "";
+        this.description = "";
         this.dateRange = {
           startDate: "",
           endDate: ""

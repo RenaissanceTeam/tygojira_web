@@ -41,7 +41,7 @@
             range
     >
       <v-spacer/>
-      <v-btn text color="primary" @click="cancel">Cancel</v-btn>
+      <v-btn text color="primary" @click="cancel">Отменить</v-btn>
       <v-btn text color="primary" @click="apply">OK</v-btn>
     </v-date-picker>
   </v-menu>
