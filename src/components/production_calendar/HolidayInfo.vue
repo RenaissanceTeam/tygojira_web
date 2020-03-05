@@ -170,6 +170,19 @@
       required(name) {
         return requiredField(name);
       }
+    },
+    watch: {
+      event: function (value) {
+        this.baseHoliday = value;
+        this.isEditActive = false;
+
+        this.title = value.title;
+        this.description = value.description;
+        this.dateRange = {
+          startDate: value.startDate,
+          endDate: value.endDate
+        }
+      }
     }
   }
 </script>
