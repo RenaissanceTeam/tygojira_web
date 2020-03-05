@@ -100,10 +100,10 @@
         debug(ADD_HOLIDAY, "Adding holiday:", holidayDto);
         productionCalendarApi.addHoliday(holidayDto)
           .then(response => {
-            const activityResponse = response.data;
-            debug(ADD_HOLIDAY, "Holiday added:", activityResponse);
+            const holidayResponse = response.data;
+            debug(ADD_HOLIDAY, "Holiday added:", holidayResponse);
             this.refreshForm();
-            this.$emit("change", holidayDto);
+            this.$emit("change", holidayResponse);
           })
           .catch(err => {
             debugError(ADD_HOLIDAY, err.message, err.response.data.message);
