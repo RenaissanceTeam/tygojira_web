@@ -96,6 +96,11 @@
         this.dateRange = [];
         this.menu = false;
       }
+    },
+    watch: {
+      menu: function (value) {
+        if (!value) this.save();
+      }
     }
   }
 </script>

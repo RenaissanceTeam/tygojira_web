@@ -24,6 +24,7 @@
         @change="updateRange"
       />
       <v-menu
+        max-width="600"
         v-model="selectedOpen"
         :close-on-content-click="false"
         :activator="selectedElement"
