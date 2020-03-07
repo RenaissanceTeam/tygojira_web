@@ -61,20 +61,42 @@
 
   export default {
     name: "AppSideNavigation",
-    data: () => ({
-      navigationItems: [
-        {title: "Личный кабинет", icon: "mdi-home-account", link: ""},
-        {title: "Календарь", icon: "mdi-calendar-account-outline", link: ""}
-      ]
-    }),
     computed: {
+      navigationItems() {
+        return [
+          {title: "Календарь", icon: "mdi-calendar-account-outline", link: "", available: this.isPersonalCalendarAvailable},
+          {title: "Мои запросы", icon: "mdi-account-arrow-right", link: "/requests/initiated", available: this.areInitiatedRequestsAvailable},
+          {title: "Назначенные запросы", icon: "mdi-account-arrow-left", link: "/requests/assigned", available: this.areAssignedRequestsAvailable},
+        ].filter(it => it.available)
+      },
       employee: function () {
         return this.$store.getters.sessionEmployee;
       },
       avatarText: function () {
         const employee = this.$store.getters.sessionEmployee;
         return employee.firstName.charAt(0).toUpperCase() + employee.lastName.charAt(0).toUpperCase()
-      }
+      },
+      isPersonalCalendarAvailable() {
+        return this.isEmployee;
+      },
+      areInitiatedRequestsAvailable() {
+        return this.isProjectLead || this.isLinearLead;
+      },
+      areAssignedRequestsAvailable() {
+        return this.isLinearLead || this.isProjectOffice;
+      },
+      isEmployee() {
+        return this.$store.getters.isEmployee;
+      },
+      isProjectLead() {
+        return this.$store.getters.isProjectLead;
+      },
+      isLinearLead() {
+        return this.$store.getters.isLinearLead;
+      },
+      isProjectOffice() {
+        return this.$store.getters.isProjectOffice;
+      },
     },
     methods: {
       logout: function () {

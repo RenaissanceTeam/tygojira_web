@@ -53,6 +53,18 @@ export default new Router({
       name: 'holidays',
       component: () => import('./components/production_calendar/ProductionCalendar.vue'),
       beforeEnter: ifAuthenticated
+    },
+    {
+      path: '/requests/initiated',
+      name: 'initiatedRequests',
+      component: () => import('./components/workload/request/initiated/InitiatedRequests'),
+      beforeEnter: ifAuthenticated
+    },
+    {
+      path: '/requests/assigned',
+      name: 'assignedRequests',
+      component: () => import('./components/workload/request/assigned/AssignedRequests'),
+      beforeEnter: ifAuthenticated
     }
   ]
 })
