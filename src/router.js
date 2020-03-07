@@ -37,12 +37,6 @@ export default new Router({
       beforeEnter: ifAuthenticated
     },
     {
-      path: '/about',
-      name: 'about',
-      component: () => import('./view/About.vue'),
-      beforeEnter: ifAuthenticated
-    },
-    {
       path: '/employees',
       name: 'employees',
       component: () => import('./components/employee/Employee.vue'),

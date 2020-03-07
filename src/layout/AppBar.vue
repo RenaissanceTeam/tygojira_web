@@ -31,7 +31,6 @@
     name: "AppBar",
     data: () => ({
       toolbarItems: [
-        {title: 'О проекте', link: '/about'},
         {title: 'Сотрудники', link: '/employees'},
         {title: 'Активности', link: '/activities'},
         {title: 'Праздники', link: '/holidays'},
