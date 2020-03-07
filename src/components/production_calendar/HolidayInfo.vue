@@ -12,7 +12,6 @@
       <v-spacer/>
       <v-btn
         icon
-        class="mx-1"
         v-if="!isEditActive"
         @click="onEditClicked"
       >
@@ -23,7 +22,7 @@
         v-if="isEditActive"
         @click="onDeleteClicked"
       >
-        <v-icon>mdi-close</v-icon>
+        <v-icon>mdi-delete</v-icon>
       </v-btn>
     </v-toolbar>
     <v-card-text>
