@@ -1,12 +1,13 @@
 <template>
-  <p>
-    initiatedRequests
-  </p>
+  <InitiatedRequestsList/>
 </template>
 
 <script>
+  import InitiatedRequestsList from "./InitiatedRequestsList";
+
   export default {
-    name: "InitiatedRequests"
+    name: "InitiatedRequests",
+    components: {InitiatedRequestsList}
   }
 </script>
 
