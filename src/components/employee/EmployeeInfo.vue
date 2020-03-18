@@ -21,8 +21,8 @@
         Удалить
       </v-btn>
     </v-card-title>
-    <v-card-text >
-      <v-list dense >
+    <v-card-text>
+      <v-list dense>
         <v-list-item>
           <v-col cols="0" sm="0">
             <v-icon>mdi-account</v-icon>
