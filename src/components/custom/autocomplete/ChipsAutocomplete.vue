@@ -51,12 +51,10 @@
         }
       }
     },
-    data: function () {
-      return {
-        icon: this.readonly ? "" : "$dropdown"
-      }
-    },
     computed: {
+      icon() {
+        return this.readonly ? "" : "$dropdown"
+      },
       valueInput: {
         get: function () {
           return this.value;
