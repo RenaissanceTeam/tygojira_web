@@ -14,6 +14,7 @@
     </template>
     <EmployeeInfo
       title="Карточка сотрудника"
+      editable
       v-if="dialog"
       v-model="editableEmployee"
       v-on:employee-deleted="onEmployeeDeleted"

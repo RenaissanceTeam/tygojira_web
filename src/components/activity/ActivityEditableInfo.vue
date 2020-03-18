@@ -8,7 +8,7 @@
         small
         color="warning"
         v-on:click="edit"
-        v-if="isEditActivityAllowed && !isEditActive"
+        v-if="isEditActivityAllowed && !isEditActive && editable"
       >
         Редактировать
       </v-btn>
@@ -16,7 +16,7 @@
         small
         color="error"
         v-on:click="deleteActivity"
-        v-if="isDeleteActivityAllowed"
+        v-if="isDeleteActivityAllowed && editable"
       >
         Удалить
       </v-btn>
@@ -71,6 +71,10 @@
 
   export default {
     props: {
+      editable: {
+        type: Boolean,
+        default: false
+      },
       title: {
         type: String,
         default: "Карточка активности"
