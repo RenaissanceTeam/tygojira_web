@@ -194,7 +194,7 @@
       },
       title: {
         type: String,
-        default: ""
+        default: "Карточка сотрудника"
       }
     },
     data() {

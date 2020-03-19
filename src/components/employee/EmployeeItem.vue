@@ -13,7 +13,6 @@
       </div>
     </template>
     <EmployeeInfo
-      title="Карточка сотрудника"
       editable
       v-if="dialog"
       v-model="editableEmployee"
