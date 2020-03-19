@@ -9,4 +9,12 @@ export default {
     api.get(`${workloadRequestMapping}/assigned`),
   addRequest: workloadRequestDto =>
     api.post(`${workloadRequestMapping}/add`, workloadRequestDto),
+  redirectRequest: id =>
+    api.post(`${workloadRequestMapping}/${id}/redirect`),
+  rejectRequest: id =>
+    api.post(`${workloadRequestMapping}/${id}/reject`),
+  satisfyRequest: id =>
+    api.post(`${workloadRequestMapping}/${id}/satisfy`),
+  pendingRequest: id =>
+    api.post(`${workloadRequestMapping}/${id}/pending`),
 }

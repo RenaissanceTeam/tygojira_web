@@ -3,7 +3,10 @@
     <v-card-title>
       Инициированные запросы
       <v-spacer/>
-      <CreateRequestForm class="px-2"/>
+      <CreateRequestForm
+        @change="addRequest"
+        class="px-2"
+      />
     </v-card-title>
     <v-card-actions>
       <v-col cols="12" sm="12">
@@ -54,6 +57,9 @@
           .catch(err => {
             debugError(GET_INITIATED_REQUESTS, err.message, err.response.data.message);
           })
+      },
+      addRequest(request) {
+        this.initiatedRequests = [request, ...this.initiatedRequests];
       }
     },
     beforeMount() {

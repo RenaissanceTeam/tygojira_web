@@ -1,69 +1,110 @@
 <template>
   <v-card>
     <v-card-title>Просмотр инициированного запроса</v-card-title>
-    <v-card-actions>
-      <v-row dense>
-        <v-col cols="12" sm="12">
-          <ListInfoItems :items="requestInfoItems"/>
+    <v-card-text class="body-1 text--primary">
+      <v-row>
+        <v-col cols="2" sm="2">
+          Активность
+        </v-col>
+        <v-divider vertical class="mx-2"/>
+        <v-col class="mt-n2 mb-n1 ml-n4">
+          <v-dialog v-model="activityDialog" max-width="1200px">
+            <template v-slot:activator="{ on }">
+              <v-list-item dense link v-on="on">
+                {{activity.name}}
+              </v-list-item>
+            </template>
+            <ActivityEditableInfo
+              v-if="activityDialog"
+              v-model="activity"
+            />
+          </v-dialog>
         </v-col>
       </v-row>
-    </v-card-actions>
+
+      <v-row>
+        <v-col cols="2" sm="2">
+          Позиция
+        </v-col>
+        <v-divider vertical class="mx-2"/>
+        <v-col>
+          {{requestPosition.position}}
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="2" sm="2" class="mt-2">
+          Навыки
+        </v-col>
+        <v-divider vertical class="mx-2"/>
+        <v-col class="ml-n4">
+          <ChipsAutocomplete
+            v-model="requestPosition.skills"
+            :items="employeeSkills"
+            readonly
+          />
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="2" sm="2" class="mt-n1">
+          Сотрудник
+        </v-col>
+        <v-divider vertical class="mx-2"/>
+        <v-col class="mt-n3 ml-n4" v-if="isEmployeeSpecified">
+          <v-dialog v-model="employeeDialog" max-width="1200px">
+            <template v-slot:activator="{ on }">
+              <v-list-item dense link v-on="on">
+                {{employee.lastName}} {{employee.firstName}} {{employee.middleName}}
+              </v-list-item>
+            </template>
+            <EmployeeInfo
+              v-if="employeeDialog"
+              v-model="employee"
+            />
+          </v-dialog>
+        </v-col>
+        <v-col class="mt-n1" v-else>
+          Сотрудник не указан
+        </v-col>
+      </v-row>
+    </v-card-text>
   </v-card>
 </template>
 
 <script>
-  import ListInfoItems from "../../../common/ListInfoItems";
+  import ActivityEditableInfo from "../../../activity/ActivityEditableInfo";
+  import ChipsAutocomplete from "../../../custom/autocomplete/ChipsAutocomplete";
+  import EmployeeInfo from "../../../employee/EmployeeInfo";
 
   export default {
     name: "InitiatedRequestInfo",
-    components: {ListInfoItems},
+    components: {EmployeeInfo, ChipsAutocomplete, ActivityEditableInfo},
     props: {
       request: {
         type: Object,
         required: true
       }
     },
+    data: function () {
+      return {
+        activityDialog: false,
+        employeeDialog: false,
+        activity: this.request.activity
+      }
+    },
     computed: {
       requestPosition() {
-        if (this.request.positions) {
-          return this.request.positions[0];
-        } else {
-          return {}
-        }
+        return this.request.positions ? this.request.positions[0] : {};
       },
-      requestInfoItems() {
-        return [
-          this.activityItem,
-          this.positionItem,
-          this.skillsItem,
-          this.employeeItem
-        ]
+      employee() {
+        return this.isEmployeeSpecified ? this.requestPosition.employee : {};
       },
-      activityItem() {
-        return {
-          key: "Активность",
-          value: this.request.activityId
-        }
+      employeeSkills() {
+        return this.$store.getters.employeeSkills;
       },
-      positionItem() {
-        return {
-          key: "Позиция",
-          value: this.requestPosition.position
-        }
-      },
-      skillsItem() {
-        return {
-          key: "Навыки",
-          value: this.requestPosition.skills.join(", ")
-        }
-      },
-      employeeItem() {
-        return {
-          key: "Сотрудник",
-          value: this.requestPosition.employeeId ?
-            this.requestPosition.employeeId :
-            "Не указан"
-        }
+      isEmployeeSpecified() {
+        return !!this.requestPosition.employeeId;
       }
     }
   }
