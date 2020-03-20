@@ -7,7 +7,12 @@
             <v-list-item-title>
               <v-row no-gutters>
                 <v-col cols="12" sm="10">
-                  <span>{{requestText}}</span>
+                  <span>Сотрудник </span>
+                  <span class="primary--text">{{employeeText}}</span>
+                  <span> к активности </span>
+                  <span class="primary--text">{{activityText}}</span>
+                  <span> на должность </span>
+                  <span class="primary--text">{{positionText}}</span>
                 </v-col>
                 <v-spacer/>
                 <v-col cols="12" sm="2" class="text-right">
@@ -74,27 +79,14 @@
       }
     },
     computed: {
-      requestPosition() {
-        if (this.request.positions) {
-          return this.request.positions[0];
-        } else {
-          return {}
-        }
-      },
-      requestText() {
-        return `${this.employeeText} к ${this.activityText} на ${this.positionText}`
-      },
       employeeText() {
-        return `Сотрудник ${this.requestPosition.employeeId ?
-          `'${this.requestPosition.employeeId}'`
-          : ""
-        }`
+        return this.request.employee ? `${this.request.employee.lastName} ${this.request.employee.firstName}` : "";
       },
       activityText() {
-        return `активности '${this.request.activityId}'`
+        return this.request.activity.name;
       },
       positionText() {
-        return `должность '${this.requestPosition.position}'`
+        return this.request.position
       }
     }
   }

@@ -28,7 +28,7 @@
         </v-col>
         <v-divider vertical class="mx-2"/>
         <v-col>
-          {{requestPosition.position}}
+          {{request.position}}
         </v-col>
       </v-row>
 
@@ -39,7 +39,7 @@
         <v-divider vertical class="mx-2"/>
         <v-col class="ml-n4">
           <ChipsAutocomplete
-            v-model="requestPosition.skills"
+            v-model="request.skills"
             :items="employeeSkills"
             readonly
           />
@@ -94,17 +94,14 @@
       }
     },
     computed: {
-      requestPosition() {
-        return this.request.positions ? this.request.positions[0] : {};
-      },
       employee() {
-        return this.isEmployeeSpecified ? this.requestPosition.employee : {};
+        return this.isEmployeeSpecified ? this.request.employee : null;
       },
       employeeSkills() {
         return this.$store.getters.employeeSkills;
       },
       isEmployeeSpecified() {
-        return !!this.requestPosition.employeeId;
+        return !!this.request.employee;
       }
     }
   }

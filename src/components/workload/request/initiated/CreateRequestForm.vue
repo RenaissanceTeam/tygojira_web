@@ -137,7 +137,10 @@
   import {GET_EMPLOYEES} from "../../../../data/constants/employee_constants";
   import {areAllRequiredFieldsSpecified} from "../../../../utils/validation";
   import workloadApi from "../../../../api/workload_api";
-  import {WorkloadRequestDto, WorkloadRequestPositionDto, WorkloadScheduleDto} from "../../../../data/dto/workload_dto";
+  import {
+    WorkloadRequestInDto,
+    WorkloadScheduleDto
+  } from "../../../../data/dto/workload_dto";
   import {ADD_WORKLOAD_REQUEST} from "../../../../data/constants/workload_constants";
 
   export default {
@@ -200,11 +203,9 @@
         return "Сотрудник" + (this.isEditActive ? "*" : "")
       },
       areRequiredFieldsSpecified() {
-        const totalHours = this.mondayHours + this.tuesdayHours + this.wednesdayHours +
-          this.thursdayHours + this.fridayHours;
         const fields = [this.selectedEmployeePosition, this.workRange.startDate, this.workRange.endDate];
         const check = this.isEditActive ? this.isActivitySelected && this.isEmployeeSelected : this.isActivitySelected;
-        return check && totalHours > 0 && areAllRequiredFieldsSpecified(fields);
+        return check && areAllRequiredFieldsSpecified(fields);
       }
     },
     methods: {
@@ -261,22 +262,20 @@
       },
       sendRequest() {
         workloadApi.addRequest(
-          new WorkloadRequestDto(
+          new WorkloadRequestInDto(
             this.selectedActivityId,
-            new WorkloadRequestPositionDto(
-              this.selectedEmployeePosition,
-              this.selectedEmployeeSkills,
-              this.selectedEmployeeId,
-              new WorkloadScheduleDto(
-                this.workRange.startDate,
-                this.workRange.endDate,
-                this.mondayHours,
-                this.tuesdayHours,
-                this.wednesdayHours,
-                this.thursdayHours,
-                this.fridayHours
-              )
-            )
+            this.selectedEmployeePosition,
+            this.selectedEmployeeSkills,
+            new WorkloadScheduleDto(
+              this.workRange.startDate,
+              this.workRange.endDate,
+              this.mondayHours,
+              this.tuesdayHours,
+              this.wednesdayHours,
+              this.thursdayHours,
+              this.fridayHours
+            ),
+            this.selectedEmployeeId
           )
         ).then(response => {
           const workloadRequestDtoResponse = response.data;

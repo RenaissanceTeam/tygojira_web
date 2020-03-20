@@ -13,8 +13,8 @@ export default {
     api.post(`${workloadRequestMapping}/${id}/redirect`),
   rejectRequest: id =>
     api.post(`${workloadRequestMapping}/${id}/reject`),
-  satisfyRequest: id =>
-    api.post(`${workloadRequestMapping}/${id}/satisfy`),
+  satisfyRequest: (id, employeeIdDto) =>
+    api.post(`${workloadRequestMapping}/${id}/satisfy`, employeeIdDto),
   pendingRequest: id =>
     api.post(`${workloadRequestMapping}/${id}/pending`),
 }

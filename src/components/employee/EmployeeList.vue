@@ -16,6 +16,7 @@
             <v-list>
               <v-divider/>
               <EmployeeItem
+                editable
                 v-for="employee in loadedEmployees"
                 v-bind:key="employee.id"
                 :employee="employee"

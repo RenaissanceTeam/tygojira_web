@@ -1,19 +1,3 @@
-export class WorkloadRequestPositionDto {
-  constructor(position, skills, employeeId, schedule) {
-    this.position = position;
-    this.skills = skills;
-    this.employeeId = employeeId;
-    this.schedule = schedule;
-  }
-}
-
-export class WorkloadRequestDto {
-  constructor(activityId, position) {
-    this.activityId = activityId;
-    this.positions = [position];
-  }
-}
-
 export class WorkloadScheduleDto {
   constructor(start, end, monday, tuesday, wednesday, thursday, friday) {
     this.start = start;
@@ -23,5 +7,21 @@ export class WorkloadScheduleDto {
     this.wednesday = wednesday;
     this.thursday = thursday;
     this.friday = friday;
+  }
+}
+
+export class WorkloadRequestInDto {
+  constructor(activityId, position, skills, schedule, employeeId) {
+    this.activityId = activityId;
+    this.position = position;
+    this.skills = skills;
+    this.schedule = schedule;
+    this.employeeId = employeeId;
+  }
+}
+
+export class EmployeeIdDto {
+  constructor(employeeId) {
+    this.employeeId = employeeId;
   }
 }
