@@ -18,7 +18,6 @@
                   <span> на должность </span>
                   <span class="primary--text">{{positionText}}</span>
                 </v-col>
-                <v-spacer/>
                 <v-col cols="12" sm="2" class="text-right">
                   <span :class="statusColor">{{statusText}}</span>
                 </v-col>

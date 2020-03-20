@@ -34,6 +34,16 @@
 
       <v-row>
         <v-col cols="2" sm="2">
+          Позиция
+        </v-col>
+        <v-divider vertical class="mx-2"/>
+        <v-col>
+          {{value.position}}
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="2" sm="2">
           Навыки
         </v-col>
         <v-divider vertical class="mx-2"/>
@@ -47,21 +57,11 @@
       </v-row>
 
       <v-row>
-        <v-col cols="2" sm="2">
-          Позиция
-        </v-col>
-        <v-divider vertical class="mx-2"/>
-        <v-col>
-          {{value.position}}
-        </v-col>
-      </v-row>
-
-      <v-row>
-        <v-col cols="2" sm="2">
+        <v-col cols="2" sm="2" class="mt-n2">
           Сотрудник
         </v-col>
         <v-divider vertical class="mx-2"/>
-        <v-col class="mt-n2 ml-n4" v-if="isEmployeeSpecified || isEmployeeSelected">
+        <v-col class="mt-n4 ml-n4" v-if="isEmployeeSpecified || isEmployeeSelected">
           <v-dialog v-model="employeeDialog" max-width="1200px">
             <template v-slot:activator="{ on }">
               <v-list-item dense link v-on="on">
