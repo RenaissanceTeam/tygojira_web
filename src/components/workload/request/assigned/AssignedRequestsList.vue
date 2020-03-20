@@ -3,10 +3,7 @@
     <v-card-title>Назначенные запросы</v-card-title>
     <v-card-actions>
       <v-col cols="12" sm="12">
-        <span v-if="noRequests">
-          Назначенные запросы отсутствуют
-        </span>
-        <v-list v-else>
+        <v-list v-if="hasRequests">
           <v-divider/>
           <AssignedRequestsItem
             v-for="request in assignedRequests"
@@ -14,6 +11,9 @@
             :request="request"
           />
         </v-list>
+        <span v-else>
+          Назначенные запросы отсутствуют
+        </span>
       </v-col>
     </v-card-actions>
   </v-card>
@@ -34,8 +34,8 @@
       }
     },
     computed: {
-      noRequests() {
-        return this.assignedRequests.length === 0;
+      hasRequests() {
+        return !!this.assignedRequests && !!this.assignedRequests.length;
       }
     },
     methods: {

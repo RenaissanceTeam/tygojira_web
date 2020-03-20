@@ -10,10 +10,7 @@
     </v-card-title>
     <v-card-actions>
       <v-col cols="12" sm="12">
-        <span v-if="noRequests">
-          Инициированные запросы отсутствуют
-        </span>
-        <v-list v-else>
+        <v-list v-if="hasRequests">
           <v-divider/>
           <InitiatedRequestItem
             v-for="request in initiatedRequests"
@@ -21,6 +18,9 @@
             :request="request"
           />
         </v-list>
+        <span v-else>
+          Инициированные запросы отсутствуют
+        </span>
       </v-col>
     </v-card-actions>
   </v-card>
@@ -42,8 +42,8 @@
       }
     },
     computed: {
-      noRequests() {
-        return this.initiatedRequests.length === 0;
+      hasRequests() {
+        return !!this.initiatedRequests && !!this.initiatedRequests.length;
       }
     },
     methods: {
