@@ -1,12 +1,12 @@
 <template>
-  <p>
-    assignedRequests
-  </p>
+  <AssignedRequestsList/>
 </template>
 
 <script>
+  import AssignedRequestsList from "./AssignedRequestsList";
   export default {
-    name: "AssignedRequests"
+    name: "AssignedRequests",
+    components: {AssignedRequestsList}
   }
 </script>
 
