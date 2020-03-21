@@ -13,7 +13,7 @@
       </div>
     </template>
     <EmployeeInfo
-      title="Карточка сотрудника"
+      :editable="editable"
       v-if="dialog"
       v-model="editableEmployee"
       v-on:employee-deleted="onEmployeeDeleted"
@@ -28,6 +28,10 @@
     name: "EmployeeItem",
     components: {EmployeeInfo},
     props: {
+      editable: {
+        type: Boolean,
+        default: false
+      },
       employee: {
         type: Object,
         required: true

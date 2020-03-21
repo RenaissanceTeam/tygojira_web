@@ -20,6 +20,7 @@
       locale="ru"
       :first-day-of-week="1"
       v-model="dateRange"
+      :min="min"
       range
       no-title
       scrollable
@@ -44,6 +45,12 @@
           }
         }
       },
+      min: {
+        type: String,
+        default: function () {
+          return undefined;
+        }
+      },
       allowSingleDay: {
         type: Boolean,
         default: false
@@ -61,7 +68,11 @@
     },
     computed: {
       dateRangeText: function () {
-        return this.dateRange.join(" ~ ");
+        if (!this.dateRange[0] && !this.dateRange[1]) {
+          return "";
+        } else {
+          return this.dateRange.join(" ~ ");
+        }
       }
     },
     methods: {

@@ -37,12 +37,6 @@ export default new Router({
       beforeEnter: ifAuthenticated
     },
     {
-      path: '/about',
-      name: 'about',
-      component: () => import('./view/About.vue'),
-      beforeEnter: ifAuthenticated
-    },
-    {
       path: '/employees',
       name: 'employees',
       component: () => import('./components/employee/Employee.vue'),
@@ -58,6 +52,18 @@ export default new Router({
       path: '/holidays',
       name: 'holidays',
       component: () => import('./components/production_calendar/ProductionCalendar.vue'),
+      beforeEnter: ifAuthenticated
+    },
+    {
+      path: '/requests/initiated',
+      name: 'initiatedRequests',
+      component: () => import('./components/workload/request/initiated/InitiatedRequests'),
+      beforeEnter: ifAuthenticated
+    },
+    {
+      path: '/requests/assigned',
+      name: 'assignedRequests',
+      component: () => import('./components/workload/request/assigned/AssignedRequests'),
       beforeEnter: ifAuthenticated
     }
   ]

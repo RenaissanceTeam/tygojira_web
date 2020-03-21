@@ -4,7 +4,7 @@
       <v-icon>{{ item.icon }}</v-icon>
     </v-col>
 
-    <v-col cols="3" sm="3">
+    <v-col cols="2" sm="2">
       {{ item.key }}
     </v-col>
     <v-divider vertical class="mx-2"/>

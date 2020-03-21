@@ -1,50 +1,49 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col cols="12" sm="8">
-        <v-card>
-          <v-card-title>
-            Сотрудники компании
-            <v-spacer/>
-            <AddEmployeeForm
-              class="px-2"
-              v-if="isAddEmployeeAllowed"
-              v-on:employee-added="refreshCurrentPage"
-            />
-          </v-card-title>
-          <v-card-actions>
-            <v-col cols="12" sm="12">
-              <v-list>
-                <v-divider/>
-                <EmployeeItem
-                  v-for="employee in loadedEmployees"
-                  v-bind:key="employee.id"
-                  :employee="employee"
-                  v-on:employee-deleted="refreshCurrentPage"
-                />
-              </v-list>
-              <v-card-text>
-                Всего сотрудников: {{totalEmployees}}
-              </v-card-text>
-
-              <v-pagination
-                v-model="currentEmployeePage"
-                :length="totalEmployeePages"
-                @input="employeesPage"
+  <v-row>
+    <v-col cols="12" sm="8">
+      <v-card>
+        <v-card-title>
+          Сотрудники компании
+          <v-spacer/>
+          <AddEmployeeForm
+            class="px-2"
+            v-if="isAddEmployeeAllowed"
+            v-on:employee-added="refreshCurrentPage"
+          />
+        </v-card-title>
+        <v-card-actions>
+          <v-col cols="12" sm="12">
+            <v-list>
+              <v-divider/>
+              <EmployeeItem
+                editable
+                v-for="employee in loadedEmployees"
+                v-bind:key="employee.id"
+                :employee="employee"
+                v-on:employee-deleted="refreshCurrentPage"
               />
-            </v-col>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-      <v-col cols="12" sm="4">
-        <EmployeeFilterForm
-          v-bind:isFilterActive.sync="isFilterActive"
-          v-on:update:isFilterActive="refreshFirstPage"
-          v-model="employeeFilter"
-        />
-      </v-col>
-    </v-row>
-  </v-container>
+            </v-list>
+            <v-card-text>
+              Всего сотрудников: {{totalEmployees}}
+            </v-card-text>
+
+            <v-pagination
+              v-model="currentEmployeePage"
+              :length="totalEmployeePages"
+              @input="employeesPage"
+            />
+          </v-col>
+        </v-card-actions>
+      </v-card>
+    </v-col>
+    <v-col cols="12" sm="4">
+      <EmployeeFilterForm
+        v-bind:isFilterActive.sync="isFilterActive"
+        v-on:update:isFilterActive="refreshFirstPage"
+        v-model="employeeFilter"
+      />
+    </v-col>
+  </v-row>
 </template>
 
 <script>

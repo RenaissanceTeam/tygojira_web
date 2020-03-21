@@ -11,6 +11,7 @@
       </v-card>
     </template>
     <ActivityEditableInfo
+      editable
       v-if="dialog"
       v-model="editableActivity"
       v-on:activity-deleted="onEmployeeDeleted"
@@ -22,6 +23,7 @@
   import ActivityEditableInfo from "./ActivityEditableInfo";
 
   export default {
+    name: "ActivityCard",
     components: {ActivityEditableInfo},
     props: {
       activity: {
@@ -35,7 +37,6 @@
         dialog: false
       }
     },
-    name: "ActivityCard",
     computed: {
       activityDateRangeText: function () {
         return this.editableActivity.startDate + " - " + this.editableActivity.endDate;

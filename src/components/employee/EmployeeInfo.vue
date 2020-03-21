@@ -8,7 +8,7 @@
         small
         color="warning"
         v-on:click="edit"
-        v-if="isEditEmployeeAllowed && !isEditActive"
+        v-if="isEditEmployeeAllowed && !isEditActive && editable"
       >
         Редактировать
       </v-btn>
@@ -16,13 +16,13 @@
         small
         color="error"
         v-on:click="deleteEmployee"
-        v-if="isDeleteEmployeeAllowed"
+        v-if="isDeleteEmployeeAllowed && editable"
       >
         Удалить
       </v-btn>
     </v-card-title>
-    <v-card-text >
-      <v-list dense >
+    <v-card-text>
+      <v-list dense>
         <v-list-item>
           <v-col cols="0" sm="0">
             <v-icon>mdi-account</v-icon>
@@ -181,18 +181,22 @@
   import {areAllRequiredFieldsSpecified, requiredField} from "../../utils/validation";
 
   export default {
+    name: "EmployeeInfo",
     components: {ChipsAutocomplete},
     props: {
+      editable: {
+        type: Boolean,
+        default: false
+      },
       value: {
         type: Object,
         required: true
       },
       title: {
         type: String,
-        default: ""
+        default: "Карточка сотрудника"
       }
     },
-    name: "EmployeeInfo",
     data() {
       return {
         oldEmployee: this.value,
