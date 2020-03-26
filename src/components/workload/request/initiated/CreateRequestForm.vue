@@ -150,7 +150,7 @@
       availableHours: {
         type: Array,
         default: function () {
-          return [0, 3, 4, 5, 6, 7, 8]
+          return [0, 2, 3, 4, 5, 6, 7, 8]
         }
       }
     },
