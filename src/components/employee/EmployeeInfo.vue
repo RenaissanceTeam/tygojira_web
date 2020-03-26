@@ -162,6 +162,17 @@
             />
           </v-expansion-panel-content>
         </v-expansion-panel>
+
+        <v-expansion-panel>
+          <v-expansion-panel-header>
+            Загруженность сотрудника
+          </v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <EmployeeHeatmap
+              :employeeId="value.id"
+            />
+          </v-expansion-panel-content>
+        </v-expansion-panel>
       </v-expansion-panels>
     </v-card-text>
     <v-card-actions>
@@ -196,10 +207,11 @@
   import ChipsAutocomplete from "../custom/autocomplete/ChipsAutocomplete";
   import {areAllRequiredFieldsSpecified, requiredField} from "../../utils/validation";
   import EmployeeCalendar from "./EmployeeCalendar";
+  import EmployeeHeatmap from "./EmployeeHeatmap";
 
   export default {
     name: "EmployeeInfo",
-    components: {EmployeeCalendar, ChipsAutocomplete},
+    components: {EmployeeHeatmap, EmployeeCalendar, ChipsAutocomplete},
     props: {
       editable: {
         type: Boolean,
