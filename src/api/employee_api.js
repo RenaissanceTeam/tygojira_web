@@ -25,4 +25,6 @@ export default {
     api.get(`${employeeSubdivisionsMapping}`),
   getEmployeePositions: () =>
     api.get(`${employeePositionsMapping}`),
+  getWorkload: id =>
+    api.get(`${employeeMapping}/${id}/workload`)
 }
