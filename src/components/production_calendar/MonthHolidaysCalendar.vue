@@ -45,6 +45,7 @@
 <script>
   import {BASE_COLOURS} from "../../data/constants/util_constants";
   import HolidayInfo from "./HolidayInfo";
+  import {CALENDAR_WEEKDAYS} from "../../data/constants/monitoring_constants";
 
   export default {
     name: "MonthHolidaysCalendar",
@@ -71,7 +72,7 @@
       weekdays: {
         type: Array,
         default: function () {
-          return [1, 2, 3, 4, 5, 6, 0];
+          return CALENDAR_WEEKDAYS;
         }
       },
       year: {
