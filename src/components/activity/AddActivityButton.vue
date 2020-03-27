@@ -13,7 +13,6 @@
             <v-text-field
               label="Наименование*"
               v-model="name"
-              :rules="required('Наименование')"
             />
           </v-col>
           <v-col cols="12" sm="12">
@@ -21,6 +20,17 @@
               ref="datePicker"
               label="Даты активности*"
               v-model="dateRange"
+            />
+          </v-col>
+          <v-col cols="12" sm="12">
+            <v-autocomplete
+              ref="lead"
+              clearable
+              :items="projectLeads"
+              :item-text="employeeSelectionText"
+              :item-value="employeeSelectionValue"
+              v-model="selectedProjectLeadId"
+              label="Руководитель*"
             />
           </v-col>
         </v-row>
@@ -47,7 +57,9 @@
   import RangeDatePicker from "../custom/datepicker/RangeDatePicker";
   import {debug, debugError} from "../../utils/logging";
   import activityApi from "../../api/activity_api";
+  import employeeApi from "../../api/employee_api";
   import {areAllRequiredFieldsSpecified, requiredField} from "../../utils/validation";
+  import {GET_PROJECT_LEADS} from "../../data/constants/employee_constants";
 
   export default {
     name: "AddActivityButton",
@@ -55,6 +67,9 @@
     data: function () {
       return {
         dialog: false,
+        projectLeads: [],
+
+        selectedProjectLeadId: null,
         name: "",
         dateRange: {
           startDate: "",
@@ -65,7 +80,7 @@
     computed: {
       areRequiredFieldsSpecified() {
         return areAllRequiredFieldsSpecified([
-          this.name, this.dateRange.startDate, this.dateRange.endDate
+          this.name, this.dateRange.startDate, this.dateRange.endDate, this.selectedProjectLeadId
         ]);
       }
     },
@@ -74,7 +89,8 @@
         const activityDto = new ActivityDto(
           this.name,
           this.dateRange.startDate,
-          this.dateRange.endDate
+          this.dateRange.endDate,
+          this.selectedProjectLeadId
         );
         debug(ADD_ACTIVITY, "Adding activity:", activityDto);
         activityApi.addActivity(activityDto)
@@ -89,6 +105,24 @@
             throw err;
           })
       },
+      loadProjectLeads() {
+        employeeApi.getLeads()
+          .then(response => {
+            const projectLeadsDtoResponse = response.data;
+            debug(GET_PROJECT_LEADS, "projectLeadsDtoResponse:", projectLeadsDtoResponse);
+            this.projectLeads = projectLeadsDtoResponse.leads;
+          })
+          .catch(err => {
+            debugError(GET_PROJECT_LEADS, err.message, err.response.data.message);
+            throw err;
+          })
+      },
+      employeeSelectionText: function (employee) {
+        return employee.lastName + " " + employee.firstName;
+      },
+      employeeSelectionValue: function (employee) {
+        return employee.id;
+      },
       close: function () {
         this.refreshForm();
       },
@@ -102,8 +136,13 @@
           startDate: "",
           endDate: ""
         };
+        this.selectedProjectLeadId = null;
+        this.$refs.lead.internalSearch = "";
         this.$refs.datePicker.clear();
       }
+    },
+    beforeMount() {
+      this.loadProjectLeads();
     }
   }
 </script>

@@ -21,7 +21,7 @@
         Удалить
       </v-btn>
     </v-card-title>
-    <v-card-text class="body-1">
+    <v-card-text class="body-1 text--primary">
       <ActivityInfo
         v-if="!isEditActive"
         :activity="value"

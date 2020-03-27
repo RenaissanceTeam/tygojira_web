@@ -26,5 +26,7 @@ export default {
   getEmployeePositions: () =>
     api.get(`${employeePositionsMapping}`),
   getWorkload: id =>
-    api.get(`${employeeMapping}/${id}/workload`)
+    api.get(`${employeeMapping}/${id}/workload`),
+  getLeads: () =>
+    api.get(`${employeeMapping}/leads`)
 }
