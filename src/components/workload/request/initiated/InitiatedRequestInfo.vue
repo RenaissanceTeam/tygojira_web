@@ -68,6 +68,20 @@
           Сотрудник не указан
         </v-col>
       </v-row>
+
+      <v-expansion-panels accordion class="my-2">
+        <v-expansion-panel>
+          <v-expansion-panel-header>
+            Запрашиваемая нагрузка сотрудника
+          </v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <RequestWorkloadHeatmap
+              :work-units="request.workUnits"
+              :employee-id="employee ? employee.id : null"
+            />
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
     </v-card-text>
   </v-card>
 </template>
@@ -76,10 +90,11 @@
   import ActivityEditableInfo from "../../../activity/ActivityEditableInfo";
   import ChipsAutocomplete from "../../../custom/autocomplete/ChipsAutocomplete";
   import EmployeeInfo from "../../../employee/EmployeeInfo";
+  import RequestWorkloadHeatmap from "../RequestWorkloadHeatmap";
 
   export default {
     name: "InitiatedRequestInfo",
-    components: {EmployeeInfo, ChipsAutocomplete, ActivityEditableInfo},
+    components: {RequestWorkloadHeatmap, EmployeeInfo, ChipsAutocomplete, ActivityEditableInfo},
     props: {
       request: {
         type: Object,

@@ -79,6 +79,21 @@
         </v-col>
       </v-row>
 
+      <v-expansion-panels accordion class="my-2">
+        <v-expansion-panel>
+          <v-expansion-panel-header>
+            Запрашиваемая нагрузка сотрудника
+          </v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <RequestWorkloadHeatmap
+              :is-compare-available="canBePerformed"
+              :work-units="value.workUnits"
+              :employee-id="employee ? employee.id : null"
+            />
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
+
       <v-row justify="center" v-if="isPerformingActive">
         <v-expansion-panels accordion flat>
           <v-expansion-panel>
@@ -198,12 +213,15 @@
   import AssignedRequestSelectEmployeeButton from "./AssignedRequestSelectEmployeeButton";
   import ChipsAutocomplete from "../../../custom/autocomplete/ChipsAutocomplete";
   import {EmployeeIdDto} from "../../../../data/dto/workload_dto";
+  import RequestWorkloadHeatmap from "../RequestWorkloadHeatmap";
 
   export default {
     name: "AssignedRequestsInfo",
     components: {
+      RequestWorkloadHeatmap,
       ChipsAutocomplete,
-      AssignedRequestSelectEmployeeButton, EmployeeItem, EmployeeInfo, ActivityEditableInfo},
+      AssignedRequestSelectEmployeeButton, EmployeeItem, EmployeeInfo, ActivityEditableInfo
+    },
     props: {
       value: {
         type: Object,
