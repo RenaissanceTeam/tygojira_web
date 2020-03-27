@@ -15,10 +15,11 @@ export class Activity {
 }
 
 export class ActivityDto {
-  constructor(name, startDate, endDate) {
+  constructor(name, startDate, endDate, leadId) {
     this.name = name;
     this.startDate = startDate;
     this.endDate = endDate;
+    this.leadId = leadId;
   }
 }
 

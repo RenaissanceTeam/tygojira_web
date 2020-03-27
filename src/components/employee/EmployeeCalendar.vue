@@ -81,15 +81,16 @@
 
 <script>
   import {BASE_COLOURS} from "../../data/constants/util_constants";
-  import ActivityEditableInfo from "../activity/ActivityEditableInfo";
   import {debug, debugError} from "../../utils/logging";
   import monitoringApi from "../../api/monitoring_api";
-  import {GET_EMPLOYEE_WORKLOAD} from "../../data/constants/monitoring_constants";
+  import {CALENDAR_WEEKDAYS, GET_EMPLOYEE_WORKLOAD} from "../../data/constants/monitoring_constants";
   import("../../utils/array");
 
   export default {
     name: "EmployeeCalendar",
-    components: {ActivityEditableInfo},
+    components: {
+      ActivityEditableInfo: () => import('../activity/ActivityEditableInfo'),
+    },
     props: {
       employeeId: {
         type: Number,
@@ -116,7 +117,7 @@
       weekdays: {
         type: Array,
         default: function () {
-          return [1, 2, 3, 4, 5, 6, 0];
+          return CALENDAR_WEEKDAYS;
         }
       },
       typeToLabel: {

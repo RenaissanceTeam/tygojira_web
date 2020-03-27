@@ -58,7 +58,11 @@
 <script>
   import monitoringApi from "../../../api/monitoring_api";
   import {debug, debugError} from "../../../utils/logging";
-  import {GET_EMPLOYEE_WORKLOAD} from "../../../data/constants/monitoring_constants";
+  import {
+    CALENDAR_WEEKDAYS,
+    GET_EMPLOYEE_WORKLOAD,
+    MAX_WORKING_HOURS
+  } from "../../../data/constants/monitoring_constants";
 
   export default {
     name: "RequestWorkloadHeatmap",
@@ -78,12 +82,12 @@
       weekdays: {
         type: Array,
         default: function () {
-          return [1, 2, 3, 4, 5, 6, 0];
+          return CALENDAR_WEEKDAYS;
         }
       },
       maxWorkingHours: {
         type: Number,
-        default: 8
+        default: MAX_WORKING_HOURS
       }
     },
     data: function () {

@@ -5,3 +5,6 @@ export const WorkloadDifferenceType = {
   IDLE: "IDLE",
   FIT: "FIT"
 };
+
+export const CALENDAR_WEEKDAYS = [1, 2, 3, 4, 5, 6, 0];
+export const MAX_WORKING_HOURS = 8;
