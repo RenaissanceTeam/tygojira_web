@@ -29,3 +29,9 @@ export class ActivityWithActivityDto {
     this.activityDto = activityDto;
   }
 }
+
+export class CloseActivityDto {
+  constructor(closureDate) {
+    this.closureDate = closureDate;
+  }
+}
