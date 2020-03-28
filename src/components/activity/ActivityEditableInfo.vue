@@ -44,6 +44,17 @@
                 />
               </v-expansion-panel-content>
             </v-expansion-panel>
+
+            <v-expansion-panel>
+              <v-expansion-panel-header>
+                Загруженность сотрудников на активности
+              </v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <ActivityEmployeeList
+                  :activity-id="value.id"
+                />
+              </v-expansion-panel-content>
+            </v-expansion-panel>
           </v-expansion-panels>
         </v-col>
       </v-row>
@@ -124,6 +135,7 @@
   import activityApi from "../../api/activity_api";
   import {areAllRequiredFieldsSpecified} from "../../utils/validation";
   import ActivityCalendar from "./ActivityCalendar";
+  import ActivityEmployeeList from "./ActivityEmployeeList";
 
   export default {
     props: {
@@ -141,7 +153,7 @@
       }
     },
     name: "ActivityEditableInfo",
-    components: {ActivityCalendar, ActivityInfo},
+    components: {ActivityEmployeeList, ActivityCalendar, ActivityInfo},
     data: function () {
       return {
         oldActivity: this.value,
