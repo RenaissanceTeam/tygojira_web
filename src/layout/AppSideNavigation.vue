@@ -64,7 +64,7 @@
     computed: {
       navigationItems() {
         return [
-          {title: "Календарь", icon: "mdi-calendar-account-outline", link: "", available: this.isPersonalCalendarAvailable},
+          {title: "Календарь", icon: "mdi-calendar-account-outline", link: "/calendar", available: this.isPersonalCalendarAvailable},
           {title: "Мои запросы", icon: "mdi-account-arrow-right", link: "/requests/initiated", available: this.areInitiatedRequestsAvailable},
           {title: "Назначенные запросы", icon: "mdi-account-arrow-left", link: "/requests/assigned", available: this.areAssignedRequestsAvailable},
         ].filter(it => it.available)
