@@ -65,6 +65,12 @@ export default new Router({
       name: 'assignedRequests',
       component: () => import('./components/workload/request/assigned/AssignedRequests'),
       beforeEnter: ifAuthenticated
+    },
+    {
+      path: '/calendar',
+      name: 'calendar',
+      component: () => import('./components/employee/PersonalCalendar'),
+      beforeEnter: ifAuthenticated
     }
   ]
 })
