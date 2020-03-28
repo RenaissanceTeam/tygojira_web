@@ -13,5 +13,7 @@ export default {
   updateActivity: (id, activityDto) =>
     api.patch(`${activityMapping}/${id}`, activityDto),
   deleteActivity: id =>
-    api.delete(`${activityMapping}/${id}`)
+    api.delete(`${activityMapping}/${id}`),
+  closeActivity: (id, closeActivityDto) =>
+    api.post(`${activityMapping}/${id}/close`, closeActivityDto)
 }
