@@ -14,14 +14,12 @@
               <v-text-field
                 label="Фамилия*"
                 v-model="lastName"
-                :rules="required('Фамилия')"
               />
             </v-col>
             <v-col cols="12" sm="6" md="4">
               <v-text-field
                 label="Имя*"
                 v-model="firstName"
-                :rules="required('Имя')"
               />
             </v-col>
             <v-col cols="12" sm="6" md="4">
@@ -32,18 +30,18 @@
             </v-col>
             <v-col cols="12" sm="6">
               <v-autocomplete
+                ref="position"
                 label="Должность*"
                 :items="employeePositions"
                 v-model="position"
-                :rules="required('Должность')"
               />
             </v-col>
             <v-col cols="12" sm="6">
               <v-autocomplete
+                ref="subdivision"
                 label="Подразделение*"
                 :items="employeeSubdivisions"
                 v-model="subdivision"
-                :rules="required('Подразделение')"
               />
             </v-col>
             <v-col cols="12" sm="12">
@@ -57,7 +55,6 @@
               <v-text-field
                 label="Логин*"
                 v-model="username"
-                :rules="required('Логин')"
               />
             </v-col>
             <v-col cols="12" sm="6">
@@ -66,7 +63,6 @@
                 label="Роли*"
                 v-model="roles"
                 multiple
-                :rules="requiredNonEmptyArray('Роли')"
               />
             </v-col>
           </v-row>
@@ -94,7 +90,7 @@
   import employeeApi from "../../api/employee_api";
   import {debug, debugError} from "../../utils/logging";
   import ChipsAutocomplete from "../custom/autocomplete/ChipsAutocomplete";
-  import {areAllRequiredFieldsSpecified, requiredField, requiredNonEmptyArray} from "../../utils/validation";
+  import {areAllRequiredFieldsSpecified} from "../../utils/validation";
 
   export default {
     name: "AddEmployeeForm",
@@ -158,6 +154,8 @@
       },
       refreshForm: function () {
         this.dialog = false;
+        this.$refs.subdivision.internalSearch = "";
+        this.$refs.position.internalSearch = "";
         this.firstName = "";
         this.middleName = "";
         this.lastName = "";
@@ -166,12 +164,6 @@
         this.subdivision = "";
         this.skills = [];
         this.roles = [];
-      },
-      required: function (name) {
-        return requiredField(name);
-      },
-      requiredNonEmptyArray: function (name) {
-        return requiredNonEmptyArray(name);
       }
     }
   }
