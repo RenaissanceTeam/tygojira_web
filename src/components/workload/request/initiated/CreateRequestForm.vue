@@ -47,6 +47,7 @@
           </v-col>
           <v-col cols="12" sm="6">
             <RangeDatePicker
+              :disabled="!isActivitySelected"
               ref="datepicker"
               :allowSingleDay="true"
               :min="datePickerMinDate"
@@ -184,7 +185,9 @@
         if (this.isEditActive) {
           return this.getNextWeekDay();
         } else {
-          return ""
+          return this.isActivitySelected ?
+            this.availableActivities.find(a => a.id === this.selectedActivityId).startDate :
+            ""
         }
       },
       isActivitySelected() {

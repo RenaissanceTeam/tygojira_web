@@ -10,6 +10,7 @@
   >
     <template v-slot:activator="{ on }">
       <v-text-field
+        :disabled="disabled"
         v-model="dateRangeText"
         :label="label"
         readonly
@@ -58,6 +59,10 @@
       label: {
         type: String,
         default: ""
+      },
+      disabled: {
+        type: Boolean,
+        default: false
       }
     },
     data: function () {
