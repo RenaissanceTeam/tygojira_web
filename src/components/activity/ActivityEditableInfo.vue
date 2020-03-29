@@ -22,10 +22,42 @@
       </v-btn>
     </v-card-title>
     <v-card-text class="body-1 text--primary">
-      <ActivityInfo
-        v-if="!isEditActive"
-        :activity="value"
-      />
+      <v-row dense v-if="!isEditActive">
+        <v-col cols="12" sm="12">
+          <ActivityInfo
+            :activity="value"
+          />
+        </v-col>
+        <v-col cols="12" sm="12">
+          <v-expansion-panels
+            v-if="!isEditActive"
+            accordion
+            tile
+          >
+            <v-expansion-panel>
+              <v-expansion-panel-header>
+                Календарь работы сотрудников на активности
+              </v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <ActivityCalendar
+                  :activity-id="value.id"
+                />
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+
+            <v-expansion-panel>
+              <v-expansion-panel-header>
+                Загруженность сотрудников на активности
+              </v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <ActivityEmployeeList
+                  :activity-id="value.id"
+                />
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
+        </v-col>
+      </v-row>
 
       <v-row v-else>
         <v-col cols="12" sm="12">
@@ -102,6 +134,8 @@
   import {Activity, ActivityDto, CloseActivityDto} from "../../data/dto/activity_dto";
   import activityApi from "../../api/activity_api";
   import {areAllRequiredFieldsSpecified} from "../../utils/validation";
+  import ActivityCalendar from "./ActivityCalendar";
+  import ActivityEmployeeList from "./ActivityEmployeeList";
 
   export default {
     props: {
@@ -119,7 +153,7 @@
       }
     },
     name: "ActivityEditableInfo",
-    components: {ActivityInfo},
+    components: {ActivityEmployeeList, ActivityCalendar, ActivityInfo},
     data: function () {
       return {
         oldActivity: this.value,

@@ -158,7 +158,7 @@
           </v-expansion-panel-header>
           <v-expansion-panel-content>
             <EmployeeCalendar
-              :employeeId="value.id"
+              :employee-id="value.id"
             />
           </v-expansion-panel-content>
         </v-expansion-panel>
@@ -169,7 +169,7 @@
           </v-expansion-panel-header>
           <v-expansion-panel-content>
             <EmployeeHeatmap
-              :employeeId="value.id"
+              :employee-id="value.id"
             />
           </v-expansion-panel-content>
         </v-expansion-panel>

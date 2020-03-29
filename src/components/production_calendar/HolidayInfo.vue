@@ -12,7 +12,7 @@
       <v-spacer/>
       <v-btn
         icon
-        v-if="!isEditActive"
+        v-if="!isEditActive && isEditHolidayAllowed"
         @click="onEditClicked"
       >
         <v-icon>mdi-pencil</v-icon>
@@ -114,6 +114,9 @@
         return areAllRequiredFieldsSpecified([
           this.title, this.dateRange.startDate, this.dateRange.endDate
         ]);
+      },
+      isEditHolidayAllowed() {
+        return this.$store.getters.holidayPermissions[UPDATE_HOLIDAY];
       }
     },
     methods: {
