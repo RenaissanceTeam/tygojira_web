@@ -22,21 +22,29 @@
           />
         </v-col>
         <v-col cols="12" sm="12">
-          <v-text-field
+          <v-autocomplete
+            ref="positionautocomplete"
+            clearable
             label="Должность"
+            :items="employeePositions"
             v-model="position"
           />
         </v-col>
         <v-col cols="12" sm="12">
-          <v-text-field
+          <v-autocomplete
+            ref="subdivisionautocomplete"
+            v-if="isEmployeeSubdivisionFilterAvailable"
+            clearable
             label="Подразделение"
+            :items="employeeSubdivisions"
             v-model="subdivision"
           />
         </v-col>
         <v-col cols="12" sm="12">
-          <ChipsCombobox
-            label="Навыки"
+          <ChipsAutocomplete
+            :items="employeeSkills"
             v-model="skills"
+            label="Навыки"
           />
         </v-col>
         <v-col cols="12" sm="12" class="text-right">
@@ -62,13 +70,13 @@
 </template>
 
 <script>
-  import ChipsCombobox from "../custom/combobox/ChipsCombobox";
   import {EmployeeFilter} from "../../data/dto/employee_dto";
+  import ChipsAutocomplete from "../custom/autocomplete/ChipsAutocomplete";
 
   export default {
     name: "EmployeeFilterForm",
     components: {
-      ChipsCombobox
+      ChipsAutocomplete
     },
     props: {
       value: {
@@ -83,6 +91,20 @@
       subdivision: "",
       skills: [],
     }),
+    computed: {
+      employeeSkills() {
+        return this.$store.getters.employeeSkills;
+      },
+      employeePositions() {
+        return this.$store.getters.employeePositions;
+      },
+      employeeSubdivisions() {
+        return this.$store.getters.employeeSubdivisions;
+      },
+      isEmployeeSubdivisionFilterAvailable() {
+        return this.$store.getters.isProjectOffice;
+      }
+    },
     methods: {
       filter: function () {
         const employeeFilter = new EmployeeFilter(
@@ -98,6 +120,10 @@
         this.$emit("update:isFilterActive", true);
       },
       clearFilter: function () {
+        this.$refs.positionautocomplete.internalSearch = "";
+        if (this.isEmployeeSubdivisionFilterAvailable) {
+          this.$refs.subdivisionautocomplete.internalSearch = "";
+        }
         this.firstName = "";
         this.middleName = "";
         this.lastName = "";
@@ -105,7 +131,7 @@
         this.subdivision = "";
         this.skills = [];
         this.$emit("update:isFilterActive", false);
-        this.$emit("input", this.emptyEmployeeFilter())
+        this.$emit("input", this.emptyEmployeeFilter());
       },
       emptyEmployeeFilter: function () {
         return {
