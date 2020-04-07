@@ -62,10 +62,6 @@
           {
             label: "android",
             link: "https://github.com/RenaissanceTeam/tygojira_android"
-          },
-          {
-            label: "ios",
-            link: "https://github.com/RenaissanceTeam/tygojira_ios"
           }
         ]
       }
